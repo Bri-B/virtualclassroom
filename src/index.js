@@ -3,7 +3,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
-import "./styles.css";
+import 'antd/dist/antd.css';
+// import './styles.css';
 
 require('@babel/polyfill');
 
