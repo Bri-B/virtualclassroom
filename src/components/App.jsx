@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Typography, Row, Col, Button,
+  Layout, Menu, Space,
+} from 'antd';
+import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import TeachSplashScreen from './TeachSplashScreen';
 import StudSplashScreen from './StudSplashScreen';
+
+const { SubMenu } = Menu;
+const { Header, Content, Sider } = Layout;
+const { Title } = Typography;
 
 export default function App() {
   const [view, setView] = useState('logout');
@@ -9,7 +18,7 @@ export default function App() {
   const grabData = () => new Promise((resolve) => {
     // console.log('grabData');
     const result = {
-      user: 'teacher',
+      user: 'student',
       id: 123,
       fullName: 'John Doe',
       idSchool: 1,
@@ -31,29 +40,69 @@ export default function App() {
   };
 
   useEffect(() => {});
-
   return (
     <div>
-      {view === 'logout' && (
-      <button
-        name="login"
-        type="button"
-        onClick={handleLogInClick}
-      >
-        login
-      </button>
-      )}
-      <button
-        name="logout"
-        type="button"
-        onClick={() => setView('logout')}
-      >
-        logout
-      </button>
-      <div>
+      <Layout>
+        <Header className="header">
+          <Row>
+            <Col span={18}>
+              <Space align="center">
+                <Title className="logo" style={{ color: 'white' }} level={3}>Virtual Classroom</Title>
+              </Space>
+            </Col>
+            <Col span={6}>
+              {view === 'logout' ? (
+                <Button
+                  className="login"
+                  type="primary"
+                  size="large"
+                  onClick={handleLogInClick}
+                >
+                  login
+                </Button>
+              )
+                : (
+                  <Button
+                    className="logout"
+                    type="primary"
+                    size="large"
+                    onClick={() => setView('logout')}
+                  >
+                    logout
+                  </Button>
+                )}
+            </Col>
+          </Row>
+        </Header>
         {view === 'teacher' && <TeachSplashScreen name={data.fullName} user={data.user} />}
         {view === 'student' && <StudSplashScreen name={data.fullName} user={data.user} />}
-      </div>
+      </Layout>
     </div>
   );
 }
+
+/*
+  return (
+    <>
+      <Row>
+        <Col span={24}>
+          <PageHeader
+            className="site-page-header"
+            title="Virtual Classroom"
+          />
+        </Col>
+      </Row>
+      <Row justify="center">
+        <Col span={12} offset={6}>
+          <div>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <div>
+          
+        </div>
+      </Row>
+    </>
+  );
+*/
