@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { Layout, Menu, Breadcrumb } from 'antd';
+import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import AddClass from '../teacher/AddClass';
 
-export default function ClassList({ user }) {
+const { SubMenu } = Menu;
+
+export default function ClassList(props) {
+  const { user, ...other } = props;
   const [list, setList] = useState([]);
   const data = [
     {
@@ -37,21 +42,14 @@ export default function ClassList({ user }) {
   useEffect(() => {
     fetchData();
   }, []);
+
   return (
-    <div>
-      {user === 'teacher' && <AddClass />}
-      {list.length > 0
-        && (
-        <ul>
-          All class
-          {list.map((obj, key1) => (
-            <li key={key1}>
-              {_.map(obj, (item, key2) => <p key={key2}>{item}</p>)}
-            </li>
-          ))}
-        </ul>
-        )}
-    </div>
+    list.map((obj, key) => (
+      <SubMenu {...other} key={key} title={obj.class_name}>
+        <Menu.Item key="1">Edit</Menu.Item>
+        <Menu.Item key="2">Delete</Menu.Item>
+      </SubMenu>
+    ))
   );
 }
 AddClass.propTypes = {
