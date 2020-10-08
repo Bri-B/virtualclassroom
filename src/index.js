@@ -3,6 +3,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
-require("@babel/polyfill");
+import "./styles.css";
+
+require('@babel/polyfill');
 
 ReactDOM.render(<App />, document.getElementById('root'));
