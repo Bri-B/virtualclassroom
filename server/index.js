@@ -6,12 +6,12 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const cookieSession = require("cookie-session");
-const passport = require("passport");
+const cookieSession = require('cookie-session');
+const passport = require('passport');
 const models = require('./db/models/index');
-require("./auth/passport.setup");
-const { isLoggedIn } = require("./auth/verifyLogIn");
-require("dotenv").config();
+require('./auth/passport.setup');
+const { isLoggedIn } = require('./auth/verifyLogIn');
+require('dotenv').config();
 
 // Cookies and Session info
 app.use(
@@ -65,7 +65,7 @@ app.get('/logout', (req, res) => {
   res.redirect('/'); // send them to where is needed
 });
 
-const connection = async() => {
+const connection = async () => {
   try {
     await models.sequelize.authenticate();
     console.log('Connection has been established successfully.');
@@ -73,9 +73,9 @@ const connection = async() => {
     console.error('Unable to connect to the database:', error);
   }
 };
-const syncModels = async() => {
+const syncModels = async () => {
   try {
-    await models.sequelize.sync({ foce: true });
+    await models.sequelize.sync();
     console.log('Models have been synced successfully.');
   } catch (error) {
     console.error('Unable to sync models:', error);

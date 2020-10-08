@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id_assignment',
     });
     Assignment.belongsToMany(models.Class, {
-      through: 'assignment_class',
+      through: models.Assignment_class,
       foreignKey: 'id_assignment',
     });
   };

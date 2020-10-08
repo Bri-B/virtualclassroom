@@ -18,15 +18,15 @@ module.exports = (sequelize, DataTypes) => {
 
   Class.associate = (models) => {
     Class.belongsToMany(models.Student, {
-      through: 'student_class',
+      through: models.Student_class,
       foreignKey: 'id_class',
     });
     Class.belongsToMany(models.Announcement, {
-      through: 'announcement_class',
+      through: models.Announcement_class,
       foreignKey: 'id_class',
     });
     Class.belongsToMany(models.Assignment, {
-      through: 'assignment_class',
+      through: models.Assignment_class,
       foreignKey: 'id_class',
     });
     Class.belongsTo(models.School, {

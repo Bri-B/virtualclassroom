@@ -6,15 +6,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     description: {
       type: DataTypes.STRING,
-      unique: true,
     },
     release_time: {
       type: DataTypes.STRING,
-      unique: true,
     },
     expiration_date: {
       type: DataTypes.STRING,
-      unique: true,
     },
   }, {
     freezeTableName: true,
@@ -22,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Announcement.associate = (models) => {
     Announcement.belongsToMany(models.Class, {
-      through: 'announcement_class',
+      through: models.Announcement_class,
       foreignKey: 'id_announcement',
     });
   };
