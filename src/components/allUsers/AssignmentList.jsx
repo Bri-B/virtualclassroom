@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Breadcrumb, Typography } from 'antd';
-import _ from 'lodash';
+import {
+  List, Typography, Skeleton, Row, Col,
+} from 'antd';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import SubmitAssignment from '../student/SubmitAssignment';
 import AddAssignment from '../teacher/AddAssignment';
-const { Header, Content, Sider } = Layout;
+
+const { Title } = Typography;
 
 export default function AssignmentList({ user }) {
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const data = [
     {
       id: 1,
@@ -31,6 +35,7 @@ export default function AssignmentList({ user }) {
   const fetchData = async () => {
     const result = await grabData();
     setList(result);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -38,30 +43,65 @@ export default function AssignmentList({ user }) {
   }, []);
 
   return (
-    <Content
-      className="site-layout-background"
-      style={{
-        padding: 24,
-        margin: 0,
-        minHeight: 280,
-      }}
-    >
-      <div>
-        {user === 'student' && <SubmitAssignment />}
-        {user === 'teacher' && <AddAssignment />}
-        {list.length > 0
-        && (
-        <ul>
-          All assignment
-          {list.map((obj, key1) => (
-            <li key={key1}>
-              {_.map(obj, (item, key2) => <p key={key2}>{item}</p>)}
-            </li>
-          ))}
-        </ul>
+    <div>
+      <Row>
+        <Col span={6}>
+          <Title className="list" style={{ color: 'rgba(0, 0, 0, 0.85)', textAlign: 'center' }} level={3}>Assignment List</Title>
+        </Col>
+        {user === 'teacher' ? <Col span={18}><AddAssignment /></Col> : <Col span={18}><SubmitAssignment /></Col>}
+      </Row>
+      {user === 'teacher'
+        ? (
+          <List
+            className="demo-loadmore-list"
+            loading={loading}
+            itemLayout="horizontal"
+            dataSource={list}
+            renderItem={(item) => (
+              <List.Item
+                actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-delete">delete</a>]}
+              >
+                <Skeleton title={false} loading={loading} active avatar>
+                  <List.Item.Meta
+                    title={<a href="#">{item.Assignment_title}</a>}
+                    description={item.description}
+                  />
+                  <span>
+                    {' '}
+                    Released at:
+                    {' '}
+                    {moment(list.release_time).format('llll')}
+                  </span>
+                </Skeleton>
+              </List.Item>
+            )}
+          />
+        )
+        : (
+          <List
+            className="demo-loadmore-list"
+            loading={loading}
+            itemLayout="horizontal"
+            dataSource={list}
+            renderItem={(item) => (
+              <List.Item>
+                <Skeleton title={false} loading={loading} active avatar>
+                  <List.Item.Meta
+                    title={<a href="#">{item.Assignment_title}</a>}
+                    description={item.description}
+                  />
+                  <span>
+                    {' '}
+                    Released at:
+                    {' '}
+                    {moment(list.release_time).format('llll')}
+                  </span>
+                </Skeleton>
+              </List.Item>
+            )}
+          />
         )}
-      </div>
-    </Content>
+    </div>
   );
 }
 AssignmentList.propTypes = {
