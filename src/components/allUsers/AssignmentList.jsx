@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Layout, Menu, Breadcrumb, Typography } from 'antd';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import SubmitAssignment from '../student/SubmitAssignment';
 import AddAssignment from '../teacher/AddAssignment';
+const { Header, Content, Sider } = Layout;
 
 export default function AssignmentList({ user }) {
   const [list, setList] = useState([]);
@@ -36,10 +38,18 @@ export default function AssignmentList({ user }) {
   }, []);
 
   return (
-    <div>
-      {user === 'student' && <SubmitAssignment />}
-      {user === 'teacher' && <AddAssignment />}
-      {list.length > 0
+    <Content
+      className="site-layout-background"
+      style={{
+        padding: 24,
+        margin: 0,
+        minHeight: 280,
+      }}
+    >
+      <div>
+        {user === 'student' && <SubmitAssignment />}
+        {user === 'teacher' && <AddAssignment />}
+        {list.length > 0
         && (
         <ul>
           All assignment
@@ -50,7 +60,8 @@ export default function AssignmentList({ user }) {
           ))}
         </ul>
         )}
-    </div>
+      </div>
+    </Content>
   );
 }
 AssignmentList.propTypes = {

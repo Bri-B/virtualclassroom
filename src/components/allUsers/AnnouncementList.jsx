@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
+import { Layout, Menu, Breadcrumb, Typography } from 'antd';
 import PropTypes from 'prop-types';
 import AddAnnouncement from '../teacher/AddAnnouncement';
+const { Header, Content, Sider } = Layout;
 
 export default function AnnouncementList({ user }) {
   const [list, setList] = useState([]);
@@ -35,9 +37,17 @@ export default function AnnouncementList({ user }) {
     fetchData();
   }, []);
   return (
-    <div>
-      {user === 'teacher' && <AddAnnouncement />}
-      {list.length > 0
+    <Content
+      className="site-layout-background"
+      style={{
+        padding: 24,
+        margin: 0,
+        minHeight: 280,
+      }}
+    >
+      <div>
+        {user === 'teacher' && <AddAnnouncement />}
+        {list.length > 0
         && (
         <ul>
           All Announcement
@@ -48,7 +58,9 @@ export default function AnnouncementList({ user }) {
           ))}
         </ul>
         )}
-    </div>
+      </div>
+
+    </Content>
   );
 }
 AnnouncementList.propTypes = {
