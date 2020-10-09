@@ -7,9 +7,8 @@ import AddClass from '../teacher/AddClass';
 
 const { SubMenu } = Menu;
 
-export default function ClassList(props) {
-  const { user, ...other } = props;
-  const [list, setList] = useState([]);
+export default function ClassList({ user }) {
+ const [list, setList] = useState([]);
   const data = [
     {
       id: 1,
@@ -40,7 +39,6 @@ export default function ClassList(props) {
   };
 
   useEffect(() => {
-    console.log({ ...other });
     fetchData();
   }, []);
 
@@ -53,8 +51,8 @@ export default function ClassList(props) {
     >
       {list.map((obj, key) => (
         <SubMenu key={key} title={obj.class_name}>
-          <Menu.Item key="1">Edit</Menu.Item>
-          <Menu.Item key="2">Delete</Menu.Item>
+          <Menu.Item key="1" onClick={() => { console.log(obj.class_name, 'edit'); }}>{user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item>
+          <Menu.Item key="2" onClick={() => { console.log(obj.class_name, 'delete'); }}>{user === 'teacher' ? 'Edit' : 'Period'}</Menu.Item>
         </SubMenu>
       ))}
     </Menu>
