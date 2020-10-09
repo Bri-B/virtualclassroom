@@ -147,18 +147,22 @@ teacherRouter.post('/create/announcement', (req, res) => {
   } = req.body;
   // seperate entry for id_class join table in then
   // select setval('context_context_id_seq', (select max(context_id) from context));
-  console.log('reqbody', req.body)
-  console.log('class', id_class)
-  Announcement.create({
-    announcement_title, description, release_time, expiration_date,
+  Announcement.findOrCreate({
+    where: {
+      announcement_title, description, release_time, expiration_date,
+    },
   })
     .then((announcement) => {
-      console.log('announcement', announcement.dataValues.id)
-      const { id } = announcement.dataValues;
-      Announcement_class.create({ id_announcement: id, id_class })
-        .then((join)=>{
-          res.send(join)
-        })
+      const { id } = announcement[0].dataValues;
+      Announcement_class.findOrCreate({
+        where: {
+          id_announcement: id,
+          id_class,
+        },
+      })
+        .then(() => {
+          res.send(announcement);
+        });
     })
     .catch((err) => {
       console.error(err);
