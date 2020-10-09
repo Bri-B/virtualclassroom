@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
-import AddClass from '../teacher/AddClass';
+import { Menu } from 'antd';
 
 const { SubMenu } = Menu;
 
 export default function ClassList({ user }) {
- const [list, setList] = useState([]);
+  const [list, setList] = useState([]);
   const data = [
     {
       id: 1,
@@ -52,16 +49,16 @@ export default function ClassList({ user }) {
       {list.map((obj, key) => (
         <SubMenu key={key} title={obj.class_name}>
           <Menu.Item key="1" onClick={() => { console.log(obj.class_name, 'edit'); }}>{user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item>
-          <Menu.Item key="2" onClick={() => { console.log(obj.class_name, 'delete'); }}>{user === 'teacher' ? 'Edit' : 'Period'}</Menu.Item>
+          <Menu.Item key="2" onClick={() => { console.log(obj.class_name, 'delete'); }}>{user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item>
         </SubMenu>
       ))}
     </Menu>
   );
 }
-AddClass.propTypes = {
+ClassList.propTypes = {
   user: PropTypes.string,
 };
 
-AddClass.defaultProps = {
+ClassList.defaultProps = {
   user: '',
 };
