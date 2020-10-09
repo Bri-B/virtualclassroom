@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
-import AddStudent from './AddStudent';
+import { Menu } from 'antd';
+
+const { SubMenu } = Menu;
 
 export default function StudentList() {
   const [list, setList] = useState([]);
@@ -22,20 +24,21 @@ export default function StudentList() {
   useEffect(() => {
     fetchData();
   }, []);
+
   return (
-    <div>
-      <AddStudent />
-      {list.length > 0
-        && (
-        <ul>
-          All Students
-          {list.map((obj, key1) => (
-            <li key={key1}>
-              {_.map(obj, (item, key2) => <p key={key2}>{item}</p>)}
-            </li>
-          ))}
-        </ul>
-        )}
-    </div>
+    <Menu
+      mode="inline"
+      defaultSelectedKeys={['1']}
+      defaultOpenKeys={['sub1']}
+      style={{ height: '100%', borderRight: 0 }}
+    >
+      {list.map((obj, key) => (
+        <Menu.Item key={key}>
+          {obj.fullName}
+          {/* <Menu.Item key="1" onClick={() => { console.log(obj.class_name, 'edit'); }}>{user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item> */}
+          {/* <Menu.Item key="2" onClick={() => { console.log(obj.class_name, 'delete'); }}>{user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item> */}
+        </Menu.Item>
+      ))}
+    </Menu>
   );
 }

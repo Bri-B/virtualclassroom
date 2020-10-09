@@ -16,7 +16,7 @@ export default function App() {
   const grabData = () => new Promise((resolve) => {
     // console.log('grabData');
     const result = {
-      user: 'student',
+      user: 'teacher',
       id: 123,
       fullName: 'John Doe',
       idSchool: 1,
