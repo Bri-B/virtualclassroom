@@ -2,13 +2,24 @@ import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import _ from 'lodash';
 
+import {
+  Form,
+  Select,
+  Input,
+  Button,
+  Modal
+} from 'antd';
+
+const { Option } = Select;
+
+const formItemLayout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 14 },
+};
+
 export default function AddStudent() {
   const [showForm, setShowForm] = useState(false);
-  const [period, setPeriod] = useState('');
-  const [email, setEmail] = useState('');
   const [classNames, setClassNames] = useState([]);
-  const [endTime, setEndTime] = useState('');
-  const [selectedNames, setSelectedNames] = useState([]);
 
   const grabClassList = () => new Promise((resolve) => resolve(['math', 'science']));
   const fetchClassList = async () => {
@@ -20,78 +31,48 @@ export default function AddStudent() {
     fetchClassList();
   }, []);
 
-  const addStudent = () => {
-    const date = new Date();
-    // post request to server to add class
-    const formSubmit = {
-      period,
-      email,
-      classNames,
-      endTime,
-      createdAt: date,
-    };
-    // console.log(formSubmit);
+  const onFinish = (values) => {
+    console.log('Received values of form: ', values);
     alert('submitted');
     setShowForm(false);
   };
-
   return (
     <div>
       { showForm
         ? (
-          <form onSubmit={addStudent}>
-            <h2>Add Student</h2>
-            <label>
-              period:
-              <input
-                name="period"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setPeriod(clean);
-                }}
-              />
-            </label>
-            <br />
-            <label>
-              email:
-              <input
-                name="email"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setEmail(clean);
-                }}
-              />
-            </label>
-            <br/>
-            <label>
-              Class Names:
-              <span>{selectedNames}</span>
-              <select multiple={true} value={selectedNames} onChange={() => {setSelectedNames()}}>
-                { _.map(classNames, (name, index) => <option key={index} value={name}>{name}</option>) }
-              </select>
-            </label>
-            <br />
-            <label>
-              Period:
-              <input
-                name="period"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setEndTime(clean);
-                }}
-              />
-            </label>
-            <br/>
-            <button type="submit">Submit</button>
-          </form>
+          <Modal
+            title="Modal 1000px width"
+            centered
+            style={{ top: 20 }}
+            visible={showForm}
+            onOk={onFinish}
+            onCancel={() => setShowForm(false)}
+            width={1000}
+          >
+            <Form
+              name="validate_other"
+              {...formItemLayout}
+              onFinish={onFinish}
+            >
+              <Form.Item name="fullName" label="Fullname" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="email" label="Email" rules={[{ type: 'email', required: true }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="select-multiple"
+                label="Select[multiple]"
+                rules={[{ required: true, message: 'Please select at least one class', type: 'array' }]}
+              >
+                <Select mode="multiple" placeholder="Please select classes">
+                  {classNames.map((name, index) => <Option key={index} value={name}>name</Option>)}
+                </Select>
+              </Form.Item>
+            </Form>
+          </Modal>
         )
-        : (<button type="button" onClick={() => setShowForm(true)}>Add Student</button>)}
+        : (<Button type="primary" onClick={() => setShowForm(true)}>Add Student</Button>)}
     </div>
   );
 }
