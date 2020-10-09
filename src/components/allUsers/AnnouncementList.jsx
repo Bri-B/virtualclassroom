@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
-import { Layout, Menu, Breadcrumb, Typography } from 'antd';
+import {
+  List, Typography, Skeleton, Row, Col,
+} from 'antd';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import AddAnnouncement from '../teacher/AddAnnouncement';
-const { Header, Content, Sider } = Layout;
+
+const { Title } = Typography;
 
 export default function AnnouncementList({ user }) {
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const data = [
     {
       id: 1,
@@ -31,38 +35,76 @@ export default function AnnouncementList({ user }) {
     const result = await grabData();
     // console.log(result);
     setList(result);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  return (
-    <Content
-      className="site-layout-background"
-      style={{
-        padding: 24,
-        margin: 0,
-        minHeight: 280,
-      }}
-    >
-      <div>
-        {user === 'teacher' && <AddAnnouncement />}
-        {list.length > 0
-        && (
-        <ul>
-          All Announcement
-          {list.map((obj, key1) => (
-            <li key={key1}>
-              {_.map(obj, (item, key2) => <p key={key2}>{item}</p>)}
-            </li>
-          ))}
-        </ul>
-        )}
-      </div>
 
-    </Content>
+  return (
+    <div>
+      <Row>
+        <Col>
+          <Title className="list" style={{ color: 'rgba(0, 0, 0, 0.85)', textAlign: 'center' }} level={3}>Announcement List</Title>
+        </Col>
+        {user === 'teacher' && <Col><AddAnnouncement /></Col>}
+      </Row>
+      {user === 'teacher'
+        ? (
+          <List
+            className="demo-loadmore-list"
+            loading={loading}
+            itemLayout="horizontal"
+            dataSource={list}
+            renderItem={(item) => (
+              <List.Item
+                actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-delete">delete</a>]}
+              >
+                <Skeleton title={false} loading={loading} active avatar>
+                  <List.Item.Meta
+                    title={<a href="#">{item.announcement_title}</a>}
+                    description={item.description}
+                  />
+                  <span>
+                    {' '}
+                    Released at:
+                    {' '}
+                    {moment(list.release_time).format('llll')}
+                  </span>
+                </Skeleton>
+              </List.Item>
+            )}
+          />
+        )
+        : (
+          <List
+            className="demo-loadmore-list"
+            loading={loading}
+            itemLayout="horizontal"
+            dataSource={list}
+            renderItem={(item) => (
+              <List.Item>
+                <Skeleton title={false} loading={loading} active avatar>
+                  <List.Item.Meta
+                    title={<a href="#">{item.announcement_title}</a>}
+                    description={item.description}
+                  />
+                  <span>
+                    {' '}
+                    Released at:
+                    {' '}
+                    {moment(list.release_time).format('llll')}
+                  </span>
+                </Skeleton>
+              </List.Item>
+            )}
+          />
+        )}
+    </div>
   );
 }
+
 AnnouncementList.propTypes = {
   user: PropTypes.string,
 };
