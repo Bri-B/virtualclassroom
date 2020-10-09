@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import _ from 'lodash';
 
 import {
   Form,
   Select,
   Input,
   Button,
-  Modal
+  Modal,
 } from 'antd';
 
 const { Option } = Select;
