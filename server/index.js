@@ -8,11 +8,13 @@ const path = require('path');
 const app = express();
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+const { studentRouter } = require('./routes/student');
+const { teacherRouter } = require('./routes/teacher');
 const models = require('./db/models/index');
 require('./auth/passport.setup');
 const { isLoggedIn } = require('./auth/verifyLogIn');
 require('dotenv').config();
-
+const bodyParser = require('body-parser');
 // Cookies and Session info
 app.use(
   cookieSession({
@@ -25,8 +27,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
-app.use(express.json());
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 // Routers
 // const { teacherRouter } = require('./routes/student');
 // const { studentRouter } = require('./routes/teacher');
@@ -40,14 +42,14 @@ const HTML_FILE = path.join(DIST_DIR, 'index.html');
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded())
 app.use(express.static(DIST_DIR));
 
 app.get('/', (req, res) => {
   res.sendFile(HTML_FILE);
 });
 
-// Routes //
-// app.use('/teacher', teacherRouter);
+app.use('/teacher', teacherRouter);
 // app.use('/student', studentRouter);
 app.use('/auth/google', passportRouter);
 

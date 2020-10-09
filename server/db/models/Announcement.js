@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Announcement = sequelize.define('announcement', {
+    // id: {
+    //   type: DataTypes.UUID,
+    //   defaultValue: Sequelize.UUIDV4,
+    //   primaryKey: true,
+    // },
     announcement_title: {
       type: DataTypes.STRING,
       unique: true,
