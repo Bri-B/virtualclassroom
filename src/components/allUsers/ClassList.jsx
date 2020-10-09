@@ -40,16 +40,24 @@ export default function ClassList(props) {
   };
 
   useEffect(() => {
+    console.log({ ...other });
     fetchData();
   }, []);
 
   return (
-    list.map((obj, key) => (
-      <SubMenu {...other} key={key} title={obj.class_name}>
-        <Menu.Item key="1">Edit</Menu.Item>
-        <Menu.Item key="2">Delete</Menu.Item>
-      </SubMenu>
-    ))
+    <Menu
+      mode="inline"
+      defaultSelectedKeys={['1']}
+      defaultOpenKeys={['sub1']}
+      style={{ height: '100%', borderRight: 0 }}
+    >
+      {list.map((obj, key) => (
+        <SubMenu key={key} title={obj.class_name}>
+          <Menu.Item key="1">Edit</Menu.Item>
+          <Menu.Item key="2">Delete</Menu.Item>
+        </SubMenu>
+      ))}
+    </Menu>
   );
 }
 AddClass.propTypes = {
