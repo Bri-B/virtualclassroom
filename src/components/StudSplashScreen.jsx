@@ -15,55 +15,25 @@ export default function StudSplashScreen({ name, user }) {
   return (
     <Layout>
       <Sider width={200} className="site-layout-background">
-        <Title className="classSlide" style={{ color: 'white', 'background-color': 'f0f2f5' }} level={3}>Class List</Title>
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
-          style={{ height: '100%', borderRight: 0 }}
-        >
-          <ClassList />
-        </Menu>
+        <Title className="classSlide" style={{ color: 'white', backgroundColor: 'F0F2F5' }} level={3}>Class List</Title>
+        <ClassList />
       </Sider>
       <Layout style={{ padding: '0 24px 24px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb>
-        <Content
-          className="site-layout-background"
-          style={{
-            padding: 24,
-            margin: 0,
-            minHeight: 280,
-          }}
-        >
-          Content
-        </Content>
+        <AnnouncementList />
+        <AssignmentList user={user} />
       </Layout>
     </Layout>
   );
 }
-//   return (
-//     <div>
-//       <h1>
-//         Hello
-//         {' '}
-//         {name}
-//       </h1>
-//       <AnnouncementList />
-//       <AssignmentList user={user} />
-//       <ClassList />
-//     </div>
-//   );
-// }
-// StudSplashScreen.propTypes = {
-//   name: PropTypes.string,
-//   user: PropTypes.string,
-// };
 
-// StudSplashScreen.defaultProps = {
-//   name: '',
-//   user: '',
-// };
+StudSplashScreen.propTypes = {
+  name: PropTypes.string,
+  user: PropTypes.string,
+};
+
+StudSplashScreen.defaultProps = {
+  name: '',
+  user: '',
+};
