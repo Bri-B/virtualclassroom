@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   Typography, Row, Col, Button,
-  Layout, Menu, Space,
+  Layout, Space,
 } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import TeachSplashScreen from './TeachSplashScreen';
 import StudSplashScreen from './StudSplashScreen';
 
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
+const { Header } = Layout;
 const { Title } = Typography;
 
 export default function App() {
@@ -45,12 +43,12 @@ export default function App() {
       <Layout>
         <Header className="header">
           <Row>
-            <Col span={18}>
+            <Col span={20}>
               <Space align="center">
-                <Title className="logo" style={{ color: 'white' }} level={3}>Virtual Classroom</Title>
+                <Title className="logo" style={{ color: 'white', textAlign: 'left' }} level={3}>Virtual Classroom</Title>
               </Space>
             </Col>
-            <Col span={6}>
+            <Col span={4}>
               {view === 'logout' ? (
                 <Button
                   className="login"
@@ -80,29 +78,3 @@ export default function App() {
     </div>
   );
 }
-
-/*
-  return (
-    <>
-      <Row>
-        <Col span={24}>
-          <PageHeader
-            className="site-page-header"
-            title="Virtual Classroom"
-          />
-        </Col>
-      </Row>
-      <Row justify="center">
-        <Col span={12} offset={6}>
-          <div>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <div>
-          
-        </div>
-      </Row>
-    </>
-  );
-*/
