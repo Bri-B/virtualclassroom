@@ -145,8 +145,6 @@ teacherRouter.post('/create/announcement', (req, res) => {
   const {
     announcement_title, description, release_time, expiration_date, id_class,
   } = req.body;
-  // seperate entry for id_class join table in then
-  // select setval('context_context_id_seq', (select max(context_id) from context));
   Announcement.findOrCreate({
     where: {
       announcement_title, description, release_time, expiration_date,
@@ -169,8 +167,77 @@ teacherRouter.post('/create/announcement', (req, res) => {
       res.status(500).send(err);
     });
 });
-
-// get all classes
+// get all classes by teacher id
+teacherRouter.get('/classes/:teacherID', (req, res) => {
+  const { teacherID } = req.params;
+  Class.findAll({
+    where: {
+      id_teacher: teacherID,
+    },
+  })
+    .then((classes) => {
+      res.send(classes);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+// add a class by teacher id
+teacherRouter.post('/classes', (req, res) => {
+  const {
+    class_name, period, start_time, end_time, id_school, id_teacher,
+  } = req.body;
+  Class.findOrCreate({
+    where: {
+      class_name, period, start_time, end_time, id_school, id_teacher,
+    },
+  })
+    .then((response) => {
+      res.send(response);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+// update class info
+teacherRouter.put('/classes/:classID', (req, res) => {
+  const { classID } = req.params;
+  const {
+    class_name, period, start_time, end_time, id_school, id_teacher,
+  } = req.body;
+  Class.update({
+    class_name, period, start_time, end_time, id_school, id_teacher,
+  }, {
+    where: {
+      id: classID,
+    },
+  })
+    .then(() => {
+      res.send('class updated');
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+// delete a class
+teacherRouter.delete('/classes/:classID', (req, res) => {
+  const { classID } = req.params;
+  Class.destroy({
+    where: {
+      id: classID,
+    },
+  })
+    .then((removedClass) => {
+      if (removedClass) {
+        res.send('class was deleted');
+        return;
+      }
+      res.status(404).send('class not found');
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
 // create assignment
 module.exports = {
   teacherRouter,
