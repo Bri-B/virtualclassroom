@@ -3,8 +3,10 @@ import {
   Typography, Row, Col, Button,
   Layout, Space,
 } from 'antd';
+import axios from 'axios';
 import TeachSplashScreen from './TeachSplashScreen';
 import StudSplashScreen from './StudSplashScreen';
+import { AUTH_ROUTES } from '../constants/routes';
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -13,28 +15,25 @@ export default function App() {
   const [view, setView] = useState('logout');
   const [data, setData] = useState(null);
 
-  const grabData = () => new Promise((resolve) => {
-    // console.log('grabData');
-    const result = {
-      user: 'teacher',
-      id: 123,
-      fullName: 'John Doe',
-      idSchool: 1,
-      email: 'johndone@fake.news',
-      created_at: new Date(),
-    };
-    resolve(result);
-  });
+  // const grabData = () => new Promise((resolve) => {
+  //   // console.log('grabData');
+  //   const result = {
+  //     user: 'teacher',
+  //     id: 123,
+  //     fullName: 'John Doe',
+  //     idSchool: 1,
+  //     email: 'johndone@fake.news',
+  //     created_at: new Date(),
+  //   };
+  //   resolve(result);
+  // });
 
   const handleLogInClick = () => {
-    // console.log('login');
-    const fetchData = async () => {
-      const obj = await grabData();
-      setData(obj);
-      setView(obj.user);
-      // setTimeout(() => console.log("view", view, "data", data), 5000);
-    };
-    fetchData();
+    console.log('login');
+    console.log(AUTH_ROUTES.GOOGLE);
+    // fetch(AUTH_ROUTES.GOOGLE)
+    //   .then((response) => console.log(response))
+    //   .catch((error) => console.error(error));
   };
 
   useEffect(() => {});
@@ -54,7 +53,7 @@ export default function App() {
                   className="login"
                   type="primary"
                   size="large"
-                  onClick={handleLogInClick}
+                  href="/auth/google"
                 >
                   login
                 </Button>
