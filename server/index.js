@@ -42,14 +42,25 @@ app.use('/auth/google', passportRouter);
 app.use('/teacher', teacherRouter);
 app.use('/student', studentRouter);
 
-app.get('/', (req, res) => {
-  res.sendFile(HTML_FILE);
+app.get('/login', (req, res) => {
+  console.log(`Serving ${req.method} from ${req.url}`);
+  // console.log('&&REQ&&', req.session);
+  console.log('&&RES&&', req.user);
+  res.json(req.user);
+  // res.redirect('/'); // send them to where is needed
 });
 
 app.get('/logout', (req, res) => {
-  req.session = null; // destory the session
+  console.log(`Serving ${req.method} from ${req.url}`);
+  // req.session.passport = null;
   req.logOut(); // logout from passport
+  req.session = null; // destory the session
   res.redirect('/'); // send them to where is needed
+});
+
+app.get('/*', (req, res) => {
+  console.log(`Serving ${req.method} from ${req.url}`);
+  res.sendFile(HTML_FILE);
 });
 
 // Database Connection
