@@ -6,14 +6,13 @@ const user = process.env.DB_USERNAME;
 const host = process.env.DB_HOST;
 const database = process.env.DB_DBNAME;
 const password = process.env.DB_PASSWORD;
-const port = process.env.DB_PORT;
 
-const sequelize = new Sequelize(
-  `postgres://${user}:${password}@${host}:${port}/${database}`,
-  {
-    logging: false,
-  },
-);
+const sequelize = new Sequelize(database, user, password, {
+  host,
+  dialect: 'postgres',
+  port: 5432,
+  logging: false,
+});
 
 const AnnouncementModel = require('./Announcement');
 const AssignmentModel = require('./Assignment');
