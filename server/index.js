@@ -43,7 +43,6 @@ app.use('/student', studentRouter);
 
 app.get('/login', (req, res) => {
   console.log(`Serving ${req.method} from ${req.url}`);
-  console.log('&&RES&&', req.user);
   res.json(req.user);
 });
 

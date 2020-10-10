@@ -13,10 +13,6 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
-  // grab
-  // look up
-  // get obj
-  // display
   Teacher.findByPk(user.id)
     .then((teacher) => {
       done(null, { user: 'teacher', ...teacher.dataValues });
@@ -35,7 +31,6 @@ passport.use(
       callbackURL: `http://localhost:${process.env.SERVER_PORT}/auth/google/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log('@@@@PASSPORT.USE');
       // accessToken, and refreshToken can be used for additional google products
       const data = {
         id: profile.id,
@@ -52,11 +47,11 @@ passport.use(
         },
       })
         .then((results) => {
-          const teacher = results[0].dataValues;
           // if the user doesn't exists, save to db, else selected the user and pass them to the done function
           // returns and empty arr if no teacher found
           // signal that this is done
           if (results.length > 0) {
+            const teacher = results[0].dataValues;
             return done(null, { id: teacher.id, isTeacher: true }); // credentials valid
           }
           return done(null, false); // unvalid credentials
