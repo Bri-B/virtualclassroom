@@ -16,11 +16,7 @@ router.get(
     // Unsuccessful authentication redirect home.
     // Successful authentication redirect to account
     // This should be expanded to check for students as well in the future
-    if (req.user.isTeacher) {
-      res.redirect('/tuser/');
-    } else {
-      res.redirect('/suser/');
-    }
+    res.redirect('/');
   },
 );
 
