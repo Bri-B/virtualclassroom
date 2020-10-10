@@ -14,7 +14,7 @@ import AddStudent from './teacher/AddStudent';
 const { Content, Sider, Footer } = Layout;
 const { Title } = Typography;
 
-export default function TeachSplashScreen({ name, user }) {
+export default function TeachSplashScreen({ data, user }) {
   return (
     <Layout>
       <Sider
@@ -62,7 +62,7 @@ export default function TeachSplashScreen({ name, user }) {
         </Sider>
         <Layout style={{ padding: '0 24px 24px' }}>
           <Content style={{ margin: 'auto', overflow: 'initial' }}>
-            <Title className="nameTeacher" style={{ color: 'rgba(0, 0, 0, 0.85)' }} level={1}>{name}</Title>
+            <Title className="nameTeacher" style={{ color: 'rgba(0, 0, 0, 0.85)' }} level={1}>{data.full_name}</Title>
             <Divider />
             <AnnouncementList user={user} />
             <AssignmentList user={user} />
@@ -75,11 +75,11 @@ export default function TeachSplashScreen({ name, user }) {
 }
 
 TeachSplashScreen.propTypes = {
-  name: PropTypes.string,
+  name: PropTypes.object,
   user: PropTypes.string,
 };
 
 TeachSplashScreen.defaultProps = {
-  name: '',
+  name: {},
   user: '',
 };
