@@ -19,7 +19,7 @@ passport.deserializeUser((user, done) => {
   // display
   Teacher.findByPk(user.id)
     .then((teacher) => {
-      done(null, teacher);
+      done(null, { user: 'teacher', ...teacher.dataValues });
     })
     .catch((err) => {
       console.error(err);
