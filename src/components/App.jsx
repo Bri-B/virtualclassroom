@@ -1,81 +1,79 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Typography, Row, Col, Button,
   Layout, Space,
 } from 'antd';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-} from 'react-router-dom';
 import TeachSplashScreen from './TeachSplashScreen';
 import StudSplashScreen from './StudSplashScreen';
-import { AUTH_ROUTES } from '../constants/routes';
 
 const { Header } = Layout;
 const { Title } = Typography;
 
 export default function App() {
-  const [view, setView] = useState('logout');
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [view, setView] = useState('');
   const [data, setData] = useState(null);
 
-  const handleLogInClick = () => {
-    console.log('login');
-    console.log(AUTH_ROUTES.GOOGLE);
-    // setData(grabData);
-    // setView('teacher');
-    // fetch(AUTH_ROUTES.GOOGLE)
-    //   .then((response) => console.log(response))
-    //   .catch((error) => console.error(error));
+  const logout = () => {
+    setLoggedIn(false);
+    axios.get('/logout')
+      .catch(err => console.error(err));
   };
+  useEffect(() => {
+    axios.get('/login')
+      .then((res) => {
+        const { data } = res;
+        if (data) {
+          const { user } = data;
+          setLoggedIn(true);
+          setData(data);
+          setView(user);
+        }
+      })
+      .catch((err) => console.error('onPageLoad', err));
+  }, []);
 
-  useEffect(() => {});
   return (
-    <Router>
-      <Layout>
-        <Header className="header">
-          <Row>
-            <Col span={20}>
-              <Space align="center">
-                <Title className="logo" style={{ color: 'white', textAlign: 'left' }} level={3}>Virtual Classroom</Title>
-              </Space>
-            </Col>
-            <Col span={4}>
-              { view === 'logout'
-                ? (
-                  <Button
-                    className="login"
-                    type="primary"
-                    size="large"
-                    href="/auth/google"
-                  >
-                    Login
-                  </Button>
-                )
-                : (
-                  <Button
-                    className="logout"
-                    type="primary"
-                    size="large"
-                    href="/logout"
-                  >
-                    Login
-                  </Button>
-                )}
-            </Col>
-          </Row>
-        </Header>
-        <Switch>
-          <Route path="/tuser/">
-            <TeachSplashScreen />
-          </Route>
-          <Route path="/suser/">
-            <StudSplashScreen />
-          </Route>
-          <Route path="/" />
-        </Switch>
-      </Layout>
-    </Router>
+    <Layout>
+      <Header className="header">
+        <Row>
+          <Col span={20}>
+            <Space align="center">
+              <Title className="logo" style={{ color: 'white', textAlign: 'left' }} level={3}>Virtual Classroom</Title>
+            </Space>
+          </Col>
+          <Col span={4}>
+            { !loggedIn
+              ? (
+                <Button
+                  className="login"
+                  type="primary"
+                  size="large"
+                  href="/auth/google"
+                >
+                  Login
+                </Button>
+              )
+              : (
+                <Button
+                  className="logout"
+                  type="primary"
+                  size="large"
+                  onClick={logout}
+                >
+                  Logout
+                </Button>
+              )}
+          </Col>
+        </Row>
+      </Header>
+      {
+        view === 'teacher' && <TeachSplashScreen user={view} data={data} />
+      }
+      {
+        view === 'student' && <StudSplashScreen user={view} data={data} />
+      }
+    </Layout>
   );
 }
