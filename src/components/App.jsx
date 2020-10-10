@@ -3,7 +3,12 @@ import {
   Typography, Row, Col, Button,
   Layout, Space,
 } from 'antd';
-import axios from 'axios';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+} from 'react-router-dom';
 import TeachSplashScreen from './TeachSplashScreen';
 import StudSplashScreen from './StudSplashScreen';
 import { AUTH_ROUTES } from '../constants/routes';
@@ -15,22 +20,11 @@ export default function App() {
   const [view, setView] = useState('logout');
   const [data, setData] = useState(null);
 
-  // const grabData = () => new Promise((resolve) => {
-  //   // console.log('grabData');
-  //   const result = {
-  //     user: 'teacher',
-  //     id: 123,
-  //     fullName: 'John Doe',
-  //     idSchool: 1,
-  //     email: 'johndone@fake.news',
-  //     created_at: new Date(),
-  //   };
-  //   resolve(result);
-  // });
-
   const handleLogInClick = () => {
     console.log('login');
     console.log(AUTH_ROUTES.GOOGLE);
+    // setData(grabData);
+    // setView('teacher');
     // fetch(AUTH_ROUTES.GOOGLE)
     //   .then((response) => console.log(response))
     //   .catch((error) => console.error(error));
@@ -38,7 +32,7 @@ export default function App() {
 
   useEffect(() => {});
   return (
-    <div>
+    <Router>
       <Layout>
         <Header className="header">
           <Row>
@@ -48,32 +42,40 @@ export default function App() {
               </Space>
             </Col>
             <Col span={4}>
-              {view === 'logout' ? (
-                <Button
-                  className="login"
-                  type="primary"
-                  size="large"
-                  href="/auth/google"
-                >
-                  login
-                </Button>
-              )
+              { view === 'logout'
+                ? (
+                  <Button
+                    className="login"
+                    type="primary"
+                    size="large"
+                    href="/auth/google"
+                  >
+                    Login
+                  </Button>
+                )
                 : (
                   <Button
                     className="logout"
                     type="primary"
                     size="large"
-                    onClick={() => setView('logout')}
+                    href="/logout"
                   >
-                    logout
+                    Login
                   </Button>
                 )}
             </Col>
           </Row>
         </Header>
-        {view === 'teacher' && <TeachSplashScreen name={data.fullName} user={data.user} />}
-        {view === 'student' && <StudSplashScreen name={data.fullName} user={data.user} />}
+        <Switch>
+          <Route path="/tuser/">
+            <TeachSplashScreen />
+          </Route>
+          <Route path="/suser/">
+            <StudSplashScreen />
+          </Route>
+          <Route path="/" />
+        </Switch>
       </Layout>
-    </div>
+    </Router>
   );
 }
