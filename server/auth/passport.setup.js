@@ -9,13 +9,21 @@ const {
 
 passport.serializeUser((user, done) => {
   // Setting userId obj on req.session
-  console.log('====PASSPORT.seralize');
   done(null, user);
 });
 
 passport.deserializeUser((user, done) => {
-  console.log('~~~PASSPORT.deserialize');
-  done(null, user);
+  // grab
+  // look up
+  // get obj
+  // display
+  Teacher.findByPk(user.id)
+    .then((teacher) => {
+      done(null, teacher);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 });
 
 // defining how passport will use google strategy
