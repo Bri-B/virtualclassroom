@@ -14,7 +14,6 @@ const { teacherRouter } = require('./routes/teacher');
 const models = require('./db/models/index');
 const passportRouter = require('./routes/auth');
 require('./auth/passport.setup');
-const { isLoggedIn } = require('./auth/verifyLogIn');
 require('dotenv').config();
 
 // Middleware
@@ -44,10 +43,8 @@ app.use('/teacher', teacherRouter);
 
 app.get('/login', (req, res) => {
   console.log(`Serving ${req.method} from ${req.url}`);
-  // console.log('&&REQ&&', req.session);
   console.log('&&RES&&', req.user);
   res.json(req.user);
-  // res.redirect('/'); // send them to where is needed
 });
 
 app.get('/logout', (req, res) => {
