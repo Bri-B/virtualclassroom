@@ -116,7 +116,7 @@ export default function ClassList({ data, list, updateList }) {
         okButtonProps={{ disabled: true, style: { display: 'none' } }}
         cancelButtonProps={{ disabled: true, style: { display: 'none' } }}
       >
-        <p>Not sure? Check the drop down on the right.</p>
+        <p>Not sure? Check the drop down on the left.</p>
         <Form
           name="validate_other"
           {...formItemLayout}

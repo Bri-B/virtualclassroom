@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
+import PropTypes from 'prop-types';
 
 import {
   Form,
@@ -16,19 +17,14 @@ const formItemLayout = {
   wrapperCol: { span: 14 },
 };
 
-export default function AddStudent() {
+export default function AddStudent({ list, updateList, data, classList }) {
   const [showForm, setShowForm] = useState(false);
   const [classNames, setClassNames] = useState([]);
 
-  const grabClassList = () => new Promise((resolve) => resolve(['math', 'science']));
-  const fetchClassList = async () => {
-    const arrOfNames = await grabClassList();
-    setClassNames(arrOfNames);
-  };
-
-  useEffect(() => {
-    fetchClassList();
-  }, []);
+  useEffect(()=>{
+    const names = classList.map((cLass) => cLass.class_name);
+    setClassNames(names);
+  }, [classList]);
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
@@ -65,7 +61,7 @@ export default function AddStudent() {
                 rules={[{ required: true, message: 'Please select at least one class', type: 'array' }]}
               >
                 <Select mode="multiple" placeholder="Please select classes">
-                  {classNames.map((name, index) => <Option key={index} value={name}>name</Option>)}
+                  {classNames.map((name, index) => <Option key={index} value={name}>{name}</Option>)}
                 </Select>
               </Form.Item>
             </Form>
@@ -75,3 +71,17 @@ export default function AddStudent() {
     </div>
   );
 }
+
+AddStudent.propTypes = {
+  data: PropTypes.object,
+  list: PropTypes.object,
+  updateList: PropTypes.func,
+  classList: PropTypes.array,
+};
+
+AddStudent.defaultProps = {
+  data: {},
+  list: {},
+  updateList: '',
+  classList: [],
+};
