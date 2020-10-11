@@ -27,7 +27,7 @@ const config = {
 export default function ClassList({ data }) {
   const [list, setList] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [editData, setEditData] = useState({});
+  const [confirm, setConfirm] = useState({});
   const [form] = Form.useForm();
   // const
   const updateList = () => {
@@ -72,6 +72,17 @@ export default function ClassList({ data }) {
     updateList();
   }, []);
 
+  const deleteClass = (e) => {
+    const id = e.slice(0, e.indexOf('.'));
+    const url = `${TEACHER_ROUTES.DELETE_CLASS}${id}`;
+    axios.delete(url)
+      .then(() => {
+        console.log('Delete');
+        updateList();
+      })
+      .catch((err) => console.error('editing class', err));
+  };
+
   return (
     <Menu
       mode="inline"
@@ -81,12 +92,12 @@ export default function ClassList({ data }) {
     >
       {list && (list.map((obj, key) => (
         <SubMenu key={key} title={obj.class_name}>
-          <Menu.Item key="1">{`ID: ${obj.id}`}</Menu.Item>
-          <Menu.Item key="2">{`Period: ${obj.period}`}</Menu.Item>
-          <Menu.Item key="3">{`Start Time: ${obj.start_time}`}</Menu.Item>
-          <Menu.Item key="4">{`End Time: ${obj.end_time}`}</Menu.Item>
-          <Menu.Item key="5" onClick={() => { setShowForm(true); }}>{data.user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item>
-          <Menu.Item key="6" onClick={() => { console.log(obj.class_name, 'delete'); }}>{data.user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item>
+          <Menu.Item key={`${obj.id}.1`}>{`ID: ${obj.id}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.2`}>{`Period: ${obj.period}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.3`}>{`Start Time: ${obj.start_time}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.4`}>{`End Time: ${obj.end_time}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.5`} onClick={() => { setShowForm(true); }}>{data.user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item>
+          <Menu.Item key={`${obj.id}.6`} onClick={({ key }) => deleteClass(key)}>{data.user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item>
         </SubMenu>
       )))}
       <Modal
