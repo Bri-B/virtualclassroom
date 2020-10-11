@@ -11,7 +11,7 @@ import ClassList from './allUsers/ClassList';
 import StudentList from './teacher/StudentList';
 import AddClass from './teacher/AddClass';
 import AddStudent from './teacher/AddStudent';
-import { TEACHER_ROUTES } from '../constants/routes';
+import { TEACHER_ROUTES, STUDENT_ROUTES } from '../constants/routes';
 
 const { Content, Sider, Footer } = Layout;
 const { Title } = Typography;
@@ -20,37 +20,20 @@ export default function TeachSplashScreen({ data, user }) {
   const [classList, setClassList] = useState([]);
   const [studentList, setStudentList] = useState([]);
 
-  const studentData = [
-    {
-      fullName: 'Jane Doe',
-    },
-    {
-      fullName: 'Doe Jane',
-    },
-  ];
   const updateStudentList = () => {
-    if (studentList.length === 0) {
-      setStudentList(studentData);
-    } else {
-      /*
-          const url = `${TEACHER_ROUTES.GET_ALL_CLASSES}${data.id}`;
-    console.log('updateClassList', url);
+    const url = `${STUDENT_ROUTES.GET_ALL_STUDENTS}`;
     axios.get(url)
       .then((res) => {
-        console.log('list get', res.data);
         setStudentList(res.data);
+        console.log("studentList", studentList)
       })
       .catch((err) => console.error('get add classes', err));
-      */
-    }
   };
 
   const updateClassList = () => {
     const url = `${TEACHER_ROUTES.GET_ALL_CLASSES}${data.id}`;
-    console.log('updateClassList', url);
     axios.get(url)
       .then((res) => {
-        console.log('list get', res.data);
         setClassList(res.data);
       })
       .catch((err) => console.error('get add classes', err));

@@ -11,17 +11,9 @@ const { Header } = Layout;
 const { Title } = Typography;
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState(true);
-  const [view, setView] = useState('teacher');
-  const [data, setData] = useState({
-    createdAt: '2020-10-10T19:12:09.644Z',
-    email: 'bri.skinner02@gmail.com',
-    full_name: 'Brianna Skinner',
-    id: 1,
-    id_school: 1,
-    updatedAt: '2020-10-10T19:12:09.644Z',
-    user: 'teacher',
-  });
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [view, setView] = useState('');
+  const [data, setData] = useState({});
 
   const logout = () => {
     setLoggedIn(false);
@@ -29,18 +21,18 @@ export default function App() {
       .catch((err) => console.error(err));
   };
   useEffect(() => {
-    // axios.get('/login')
-    //   .then((res) => {
-    //     const { data } = res;
-    //     console.log(data);
-    //     if (data) {
-    //       const { user } = data;
-    //       setLoggedIn(true);
-    //       setData(data);
-    //       setView(user);
-    //     }
-    //   })
-    //   .catch((err) => console.error('onPageLoad', err));
+    axios.get('/login')
+      .then((res) => {
+        const { data } = res;
+        console.log(data);
+        if (data) {
+          const { user } = data;
+          setLoggedIn(true);
+          setData(data);
+          setView(user);
+        }
+      })
+      .catch((err) => console.error('onPageLoad', err));
   }, []);
 
   return (
