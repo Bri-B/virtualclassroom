@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/teacher', teacherRouter);
-// app.use('/student', studentRouter);
+app.use('/student', studentRouter);
 app.use('/auth/google', passportRouter);
 
 app.get('/', (req, res) => {
