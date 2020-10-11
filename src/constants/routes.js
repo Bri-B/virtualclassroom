@@ -2,6 +2,7 @@ const baseURl = '';
 
 const authRoot = `${baseURl}/auth`;
 const teacherRoot = `${baseURl}/teacher`;
+const studentRoot = `${baseURl}/student`;
 
 export const TEACHER_ROUTES = {
   GET_TEACHER_BY_EMAIL: `${teacherRoot}/email/`, // :teacherEmail
@@ -18,6 +19,17 @@ export const TEACHER_ROUTES = {
 };
 // need update student, delete assignment, delete announcement
 
+export const STUDENT_ROUTES = {
+  GET_STUDENT_BY_EMAIL: `${studentRoot}/email/`, // :studentEmail
+  GET_STUDENT_BY_NAME: `${studentRoot}/name/`, // :studentName
+  GET_STUDENT_BY_ID: `${studentRoot}/ID/`, // :studentID
+  GET_ALL_STUDENTS: `${studentRoot}/`,
+  GET_ALL_CLASSES_BY_STUD: `${studentRoot}/classes/`, // :studentID
+  GET_SCHOOL_BY_STUDID: `${studentRoot}/school/`, // :studentID
+  GET_ALL_ANNOUNCE_BY_CLASS: `${studentRoot}/announcement/`, // :classID
+  GET_ALL_ASSIGN_BY_CLASS: `${studentRoot}/assignment/`, // :classID
+  POST_SUBMIT_ASSIGN: `${studentRoot}/submit/assignment/`, // :classID
+};
 export const AUTH_ROUTES = {
   GOOGLE: `${authRoot}/google`,
 };
