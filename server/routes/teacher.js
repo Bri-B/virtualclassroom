@@ -42,7 +42,6 @@ teacherRouter.get('/ID/:teacherID', (req, res) => {
   const { teacherID } = req.params;
   Teacher.findByPk(teacherID)
     .then((teacher) => {
-      console.log(teacher);
       res.send(teacher);
     })
     .catch((err) => {
@@ -60,7 +59,6 @@ teacherRouter.get('/email/:teacherEmail', (req, res) => {
     },
   })
     .then((teacher) => {
-      console.log(teacher);
       res.send(teacher);
     })
     .catch((err) => {
@@ -79,7 +77,6 @@ teacherRouter.get('/name/:teacherName', (req, res) => {
     },
   })
     .then((teacher) => {
-      console.log(teacher);
       res.send(teacher);
     })
     .catch((err) => {
@@ -173,8 +170,6 @@ teacherRouter.post('/create/announcement', (req, res) => {
     .then((announcement) => {
       const { id } = announcement.dataValues;
       id_class.map((classid) => {
-        console.log('map id_class', classid);
-        console.log('announcement id', id);
         Announcement_class.findOrCreate({
           where: {
             id_announcement: id,
