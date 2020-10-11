@@ -18,7 +18,7 @@ export default function TeachSplashScreen({ data, user }) {
   return (
     <Layout>
       <Sider
-        width={200}
+        width={250}
         className="site-layout-background"
         style={{
           backgroundColor: '#1890ff',
@@ -36,7 +36,7 @@ export default function TeachSplashScreen({ data, user }) {
             <AddClass />
           </Col>
         </Row>
-        <ClassList user={user} />
+        <ClassList data={data} />
       </Sider>
       <Layout>
         <Sider
@@ -55,17 +55,17 @@ export default function TeachSplashScreen({ data, user }) {
               <Title className="studentSide" style={{ color: 'white' }} level={3}>Student List</Title>
             </Col>
             <Col>
-              <AddStudent />
+              <AddStudent data={data} user={user} />
             </Col>
           </Row>
-          <StudentList />
+          <StudentList data={data} />
         </Sider>
         <Layout style={{ padding: '0 24px 24px' }}>
           <Content style={{ margin: 'auto', overflow: 'initial' }}>
             <Title className="nameTeacher" style={{ color: 'rgba(0, 0, 0, 0.85)' }} level={1}>{data.full_name}</Title>
             <Divider />
-            <AnnouncementList user={user} />
-            <AssignmentList user={user} />
+            <AnnouncementList data={data} user={user} />
+            <AssignmentList data={data} user={user} />
           </Content>
           <Footer style={{ textAlign: 'center' }}>Virtual Classroom ~ 2020 Created by VS Rock</Footer>
         </Layout>
@@ -75,11 +75,11 @@ export default function TeachSplashScreen({ data, user }) {
 }
 
 TeachSplashScreen.propTypes = {
-  name: PropTypes.object,
+  data: PropTypes.object,
   user: PropTypes.string,
 };
 
 TeachSplashScreen.defaultProps = {
-  name: {},
+  data: {},
   user: '',
 };
