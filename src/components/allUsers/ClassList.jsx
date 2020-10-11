@@ -4,8 +4,6 @@ import {
   Menu, Modal, Form, TimePicker, Button, Input,
 } from 'antd';
 import axios from 'axios';
-import moment from 'moment';
-import _ from 'lodash';
 import { TEACHER_ROUTES } from '../../constants/routes';
 
 const { SubMenu } = Menu;
@@ -39,12 +37,10 @@ export default function ClassList({ data, list, updateList }) {
       start_time: fieldsValue.start_time.format('HH:mm:ss'),
       end_time: fieldsValue.end_time.format('HH:mm:ss'),
     };
-    console.log('Received values of form: ', values);
     const [match] = list.filter((obj) => `${obj.id}` === values.id);
     const url = `${TEACHER_ROUTES.PUT_UPDATE_CLASS}${match.id}`;
     axios.put(url, values)
       .then(() => {
-        console.log('put submitted');
         updateList();
       })
       .then(() => {
@@ -65,14 +61,13 @@ export default function ClassList({ data, list, updateList }) {
   const clickDelete = (e) => {
     setSelected(e);
     setConfirmDelete(true);
-  }
+  };
 
   const deleteClass = (e) => {
     const id = e.slice(0, e.indexOf('.'));
     const url = `${TEACHER_ROUTES.DELETE_CLASS}${id}`;
     axios.delete(url)
       .then(() => {
-        console.log('Delete');
         updateList();
         setConfirmDelete(false);
       })
