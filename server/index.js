@@ -11,6 +11,7 @@ const passport = require('passport');
 // const { studentRouter } = require('./routes/student');
 const bodyParser = require('body-parser');
 const { teacherRouter } = require('./routes/teacher');
+const { studentRouter } = require('./routes/student');
 const models = require('./db/models/index');
 const passportRouter = require('./routes/auth');
 require('./auth/passport.setup');
