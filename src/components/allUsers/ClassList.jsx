@@ -25,10 +25,11 @@ const config = {
 };
 
 export default function ClassList({ data, list, updateList }) {
-  console.log(list);
   const [showForm, setShowForm] = useState(false);
   const [form] = Form.useForm();
-  
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [selected, setSelected] = useState(null);
+
   const onFinish = (fieldsValue) => {
     // Grabbing the values from the form
     const values = {
@@ -61,6 +62,11 @@ export default function ClassList({ data, list, updateList }) {
     updateList();
   }, []);
 
+  const clickDelete = (e) => {
+    setSelected(e);
+    setConfirmDelete(true);
+  }
+
   const deleteClass = (e) => {
     const id = e.slice(0, e.indexOf('.'));
     const url = `${TEACHER_ROUTES.DELETE_CLASS}${id}`;
@@ -68,6 +74,7 @@ export default function ClassList({ data, list, updateList }) {
       .then(() => {
         console.log('Delete');
         updateList();
+        setConfirmDelete(false);
       })
       .catch((err) => console.error('editing class', err));
   };
@@ -86,9 +93,18 @@ export default function ClassList({ data, list, updateList }) {
           <Menu.Item key={`${obj.id}.3`}>{`Start Time: ${obj.start_time}`}</Menu.Item>
           <Menu.Item key={`${obj.id}.4`}>{`End Time: ${obj.end_time}`}</Menu.Item>
           <Menu.Item key={`${obj.id}.5`} onClick={() => { setShowForm(true); }}>{data.user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item>
-          <Menu.Item key={`${obj.id}.6`} onClick={({ key }) => deleteClass(key)}>{data.user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item>
+          <Menu.Item key={`${obj.id}.6`} onClick={({ key }) => clickDelete(key)}>{data.user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item>
         </SubMenu>
       )))}
+      <Modal
+        title="Confirm Delete"
+        visible={confirmDelete}
+        onOk={() => deleteClass(selected)}
+        onCancel={() => setConfirmDelete(false)}
+        okText="Delete"
+      >
+        <p>Are you sure you want to delete?</p>
+      </Modal>
       <Modal
         title="Edit Class"
         centered
