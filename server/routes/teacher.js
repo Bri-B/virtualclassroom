@@ -254,27 +254,110 @@ teacherRouter.delete('/delete/announcement', (req, res) => {
       res.status(500).send(err);
     });
 });
-// create assignment (send class id's as object? array?
+// create assignment (send class id's as array)
+// id students? teacher able to see students assignments?
 teacherRouter.post('/create/assignment', (req, res) => {
   const {
     assignment_name, description, due_date, release_time, id_class,
   } = req.body;
-  Announcement.findOrCreate({
+  Assignment.create({
+    assignment_name, description, due_date, release_time,
+  })
+    .then((assignment) => {
+      const { id } = assignment.dataValues;
+      id_class.map((classid) => {
+        Assignment_class.findOrCreate({
+          where: {
+            id_assignment: id,
+            id_class: classid,
+          },
+        });
+      });
+    })
+    .then((assignment) => {
+      res.send(assignment);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(err);
+    });
+});
+// get all assignments for a class
+teacherRouter.get('/assignment/:classID', (req, res) => {
+  const { classID } = req.params;
+  Assignment_class.findAll({
+    where: { id_class: classID },
+  })
+    .then((associations) => {
+      const ids = [];
+      associations.map((assObj) => ids.push(assObj.id_assignment));
+      Assignment.findAll({
+        where: {
+          id: { [Op.or]: ids },
+        },
+      }).then((assignments) => {
+        res.send(assignments);
+      });
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+// edit assignment, id is assignment, id_class is array of classes to associate with
+teacherRouter.put('/edit/assignment', (req, res) => {
+  const {
+    id, assignment_name, description, due_date, release_time, id_class,
+  } = req.body;
+  Assignment.update(
+    {
+      assignment_name, description, due_date, release_time,
+    },
+    {
+      where: {
+        id,
+      },
+
+    },
+  )
+    .then(() => {
+      Assignment_class.destroy({
+        where: {
+          id_assignment: id,
+        },
+      });
+    })
+    .then(() => {
+      id_class.map((classid) => {
+        Assignment_class.create({
+          id_assignment: id,
+          id_class: classid,
+        });
+      });
+    })
+    .then(() => {
+      res.send('done');
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(err);
+    });
+});
+// delete announcement
+teacherRouter.delete('/delete/assignment', (req, res) => {
+  const { id } = req.body;
+  Assignment.destroy({
     where: {
-      announcement_title, description, release_time, expiration_date,
+      id,
     },
   })
-    .then((announcement) => {
-      const { id } = announcement[0].dataValues;
-      Announcement_class.findOrCreate({
+    .then(() => {
+      Assignment_class.destroy({
         where: {
-          id_announcement: id,
-          id_class,
+          id_assignment: id,
         },
-      })
-        .then(() => {
-          res.send(announcement);
-        });
+      });
+    }).then(() => {
+      res.send('deleted');
     })
     .catch((err) => {
       console.error(err);
@@ -352,7 +435,6 @@ teacherRouter.delete('/classes/:classID', (req, res) => {
       res.status(500).send(err);
     });
 });
-// create assignment
 module.exports = {
   teacherRouter,
 };
