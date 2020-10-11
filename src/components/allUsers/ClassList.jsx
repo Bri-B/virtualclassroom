@@ -24,28 +24,17 @@ const config = {
   rules: [{ type: 'object', required: true, message: 'Please select time!' }],
 };
 
-export default function ClassList({ data }) {
-  const [list, setList] = useState([]);
+export default function ClassList({ data, list, updateList }) {
+  console.log(list);
   const [showForm, setShowForm] = useState(false);
-  const [confirm, setConfirm] = useState({});
   const [form] = Form.useForm();
-  // const
-  const updateList = () => {
-    const url = `${TEACHER_ROUTES.GET_ALL_CLASSES}${data.id}`;
-    console.log('updateList', url);
-    axios.get(url)
-      .then((res) => {
-        console.log('list get', res.data);
-        setList(res.data);
-      })
-      .catch((err) => console.error('get add classes', err));
-  };
+  
   const onFinish = (fieldsValue) => {
     // Grabbing the values from the form
     const values = {
       ...fieldsValue,
       id_school: data.id_school,
-      id_teacher: data.id_teacher,
+      id_teacher: data.id,
       start_time: fieldsValue.start_time.format('HH:mm:ss'),
       end_time: fieldsValue.end_time.format('HH:mm:ss'),
     };

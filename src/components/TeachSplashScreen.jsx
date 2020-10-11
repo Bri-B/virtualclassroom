@@ -2,7 +2,7 @@ import {
   Layout, Typography, Row, Col, Divider,
 } from 'antd';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AnnouncementList from './allUsers/AnnouncementList';
 import AssignmentList from './allUsers/AssignmentList';
@@ -10,11 +10,28 @@ import ClassList from './allUsers/ClassList';
 import StudentList from './teacher/StudentList';
 import AddClass from './teacher/AddClass';
 import AddStudent from './teacher/AddStudent';
+import axios from 'axios'
+import { TEACHER_ROUTES } from '../constants/routes';
 
 const { Content, Sider, Footer } = Layout;
 const { Title } = Typography;
 
 export default function TeachSplashScreen({ data, user }) {
+  const [list, setList] = useState([]);
+
+  const updateList = () => {
+    const url = `${TEACHER_ROUTES.GET_ALL_CLASSES}${data.id}`;
+    console.log('updateList', url);
+    axios.get(url)
+      .then((res) => {
+        console.log('list get', res.data);
+        setList(res.data);
+      })
+      .catch((err) => console.error('get add classes', err));
+  };
+  useEffect(()=>{
+    updateList();
+  }, []);
   return (
     <Layout>
       <Sider
@@ -33,10 +50,10 @@ export default function TeachSplashScreen({ data, user }) {
             <Title className="classSlide" style={{ color: 'white' }} level={3}>Class List</Title>
           </Col>
           <Col>
-            <AddClass />
+            <AddClass data={data} updateList={updateList} />
           </Col>
         </Row>
-        <ClassList data={data} />
+        <ClassList data={data} updateList={updateList} list={list} />
       </Sider>
       <Layout>
         <Sider
