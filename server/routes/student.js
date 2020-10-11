@@ -87,7 +87,7 @@ studentRouter.get('/name/:studentName', (req, res) => {
 // get school info by student primary key id
 studentRouter.get('/school/:studentID', (req, res) => {
   const { studentID } = req.params;
-  Student.findByPk(studentId)
+  Student.findByPk(studentID)
     .then((student) => {
       School.findByPk(student.dataValues.id_school)
         .then((school) => {
