@@ -25,7 +25,6 @@ export default function TeachSplashScreen({ data, user }) {
     axios.get(url)
       .then((res) => {
         setStudentList(res.data);
-        console.log("studentList", studentList)
       })
       .catch((err) => console.error('get add classes', err));
   };
@@ -84,7 +83,7 @@ export default function TeachSplashScreen({ data, user }) {
               <Title className="studentSide" style={{ color: 'white' }} level={3}>Student List</Title>
             </Col>
             <Col>
-              <AddStudent data={data} user={user} updateList={updateStudentList} classList={classList} />
+              <AddStudent data={data} user={user} list={studentList} updateList={updateStudentList} classList={classList} />
             </Col>
           </Row>
           <StudentList data={data} list={studentList} updateList={updateStudentList} classList={classList} />

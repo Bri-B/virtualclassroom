@@ -88,8 +88,8 @@ export default function StudentList({
       defaultOpenKeys={['sub1']}
       style={{ height: '100%', borderRight: 0 }}
     >
-      {list.map((obj, key) => (
-        <SubMenu key={key} title={obj.fullName}>
+      {list.length > 0 && list.map((obj, key) => (
+        <SubMenu key={key} title={obj.full_name}>
           <Menu.Item key="1" onClick={() => setShowForm(true)}>Edit</Menu.Item>
           <Menu.Item key={`${obj.fullName}.2`} onClick={({ key }) => clickDelete(key)}>Delete</Menu.Item>
         </SubMenu>
