@@ -46,9 +46,7 @@ export default function StudentList({
   };
 
   useEffect(() => {
-    console.log("classlist", classList);
     const names = classList.map((cLass) => cLass.class_name);
-    console.log(names);
     setClassNames(names);
   }, [classList]);
 
