@@ -22,6 +22,7 @@ export default function StudentList({
   const [showForm, setShowForm] = useState(false);
   const [match, setMatch] = useState({});
   const [classNames, setClassNames] = useState([]);
+  const [classId, setClassId] = useState(null);
   const [form] = Form.useForm();
 
   const clickDelete = (e) => {
@@ -61,17 +62,15 @@ export default function StudentList({
   };
 
   const deleteClass = (e) => {
-    const id = e.slice(0, e.indexOf('.'));
-    console.log('delete', id);
-    setConfirmDelete(false);
-    // const url = `${TEACHER_ROUTES.DELETE_CLASS}${id}`;
-    // axios.delete(url)
-    //   .then(() => {
-    //     console.log('Delete');
-    //     updateList();
-    //     setConfirmDelete(false);
-    //   })
-    //   .catch((err) => console.error('editing class', err));
+    const studentId = e.slice(0, e.indexOf('.'));
+    const url = `${TEACHER_ROUTES.DELETE_STUDENT_FROM_CLASS}${studentId}/${classId}`;
+    axios.delete(url)
+      .then(() => {
+        console.log('Delete');
+        updateList();
+        setConfirmDelete(false);
+      })
+      .catch((err) => console.error('editing class', err));
   };
 
   useEffect(() => {
@@ -91,7 +90,7 @@ export default function StudentList({
       {list.length > 0 && list.map((obj, key) => (
         <SubMenu key={key} title={obj.full_name}>
           <Menu.Item key="1" onClick={() => setShowForm(true)}>Edit</Menu.Item>
-          <Menu.Item key={`${obj.fullName}.2`} onClick={({ key }) => clickDelete(key)}>Delete</Menu.Item>
+          <Menu.Item key={`${obj.id}.2`} onClick={({ key }) => clickDelete(key)}>Delete</Menu.Item>
         </SubMenu>
       ))}
       <Modal
@@ -101,7 +100,8 @@ export default function StudentList({
         onCancel={() => setConfirmDelete(false)}
         okText="Delete"
       >
-        <p>Are you sure you want to delete?</p>
+        <p>What is the ID of the class you want to remove this student from?</p>
+        <Input onChange={(e) => setClassId(e.target.value)}/> 
       </Modal>
       <Modal
         title="Edit Student"
