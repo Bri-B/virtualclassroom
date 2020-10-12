@@ -44,7 +44,7 @@ export default function App() {
               <Title className="logo" style={{ color: 'white', textAlign: 'left' }} level={3}>Virtual Classroom</Title>
             </Space>
           </Col>
-          <Col span={4}>
+          <Col style={{ textAlign: 'right' }} span={4}>
             { !loggedIn
               ? (
                 <Button

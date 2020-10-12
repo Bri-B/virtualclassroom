@@ -36,8 +36,10 @@ export const STUDENT_ROUTES = {
   GET_ALL_CLASSES_BY_STUD: `${studentRoot}/classes/`, // :studentID
   GET_SCHOOL_BY_STUDID: `${studentRoot}/school/`, // :studentID
   GET_ALL_ANNOUNCE_BY_CLASS: `${studentRoot}/announcement/`, // :classID
-  GET_ALL_ASSIGN_BY_CLASS: `${studentRoot}/assignment/`, // :classID
-  POST_SUBMIT_ASSIGN: `${studentRoot}/submit/assignment/`, // :classID
+  GET_ALL_ASSIGN_BY_CLASS: `${studentRoot}/announcement/`, // :classID
+  GET_ALL_ANNOUNCE_BY_STUDID: `${studentRoot}/announcement/studentID/`, // studentID
+  GET_ALL_ASSIGN_BY_STUDID: `${studentRoot}/assignment/studentID/`, // studentID
+  PUT_SUBMIT_ASSIGN: `${studentRoot}/submit/assignment/`,
 };
 export const AUTH_ROUTES = {
   GOOGLE: `${authRoot}/google`,

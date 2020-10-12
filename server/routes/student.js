@@ -120,6 +120,38 @@ studentRouter.get('/announcement/:classID', (req, res) => {
       res.status(500).send(err);
     });
 });
+
+// get all announcements for a student
+studentRouter.get('/announcement/studentID/:studentID', (req, res) => {
+  const { studentID } = req.params;
+  Student_class.findAll({
+    where: { id_student: studentID },
+  })
+    .then((associations) => {
+      const ids = [];
+      associations.map((assObj) => ids.push(assObj.id_class));
+      Announcement_class.findAll({
+        where: {
+          id_class: { [Op.or]: ids },
+        },
+      })
+        .then((associations) => {
+          const ids = [];
+          associations.map((assObj) => ids.push(assObj.id_announcement));
+          Announcement.findAll({
+            where: {
+              id: { [Op.or]: ids },
+            },
+          })
+        .then((announcements) => {
+          res.send(announcements);
+        })
+      })
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
 // create announcement (class id) => class id is an array of the
 // classes you want to associate with this announcement
 
@@ -144,6 +176,29 @@ studentRouter.get('/assignment/:classID', (req, res) => {
       res.status(500).send(err);
     });
 });
+
+// get all assignments for student
+studentRouter.get('/assignment/studentID/:studentID', (req, res) => {
+  const { studentID } = req.params;
+  Assignment_student.findAll({
+    where: { id_student: studentID },
+  })
+    .then((associations) => {
+      const ids = [];
+      associations.map((assObj) => ids.push(assObj.id_assignment));
+      Assignment.findAll({
+        where: {
+          id: { [Op.or]: ids },
+        },
+      }).then((assignments) => {
+        res.send(assignments);
+      });
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
 // submit assignment
 studentRouter.put('/submit/assignment', (req, res) => {
   const {
@@ -167,13 +222,26 @@ studentRouter.put('/submit/assignment', (req, res) => {
 // get all classes by student id
 studentRouter.get('/classes/:studentID', (req, res) => {
   const { studentID } = req.params;
-  Class.findAll({
+  Student_class.findAll({
     where: {
       id_student: studentID,
     },
   })
     .then((classes) => {
-      res.send(classes);
+      const classesArr = [];
+      classes.map((classObj) => {
+        classesArr.push(classObj.id_class);
+      });
+      Class.findAll({
+        where: {
+          id: {
+            [Op.or]: classesArr,
+          },
+        },
+      })
+        .then((result) => {
+          res.send(result);
+        });
     })
     .catch((err) => {
       res.status(500).send(err);
