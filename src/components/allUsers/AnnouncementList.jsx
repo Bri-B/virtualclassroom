@@ -10,7 +10,7 @@ import { STUDENT_ROUTES } from '../../constants/routes';
 
 const { Title } = Typography;
 
-export default function AnnouncementList({ data, user }) {
+export default function AnnouncementList({ data, user, classList }) {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +34,7 @@ export default function AnnouncementList({ data, user }) {
         <Col span={12}>
           <Title className="list" style={{ color: 'rgba(0, 0, 0, 0.85)', marginRight: '32px' }} level={3}>Announcement List</Title>
         </Col>
-        {user === 'teacher' && <Col style={{ textAlign: 'right' }} span={12}><AddAnnouncement /></Col>}
+        {user === 'teacher' && <Col style={{ textAlign: 'right' }} span={12}><AddAnnouncement classList={classList} grabAll={grabAll} /></Col>}
         <Col span={24}>
           {user === 'teacher'
             ? (
@@ -96,9 +96,11 @@ export default function AnnouncementList({ data, user }) {
 AnnouncementList.propTypes = {
   user: PropTypes.string,
   data: PropTypes.object,
+  classList: PropTypes.array,
 };
 
 AnnouncementList.defaultProps = {
   user: '',
   data: {},
+  classList: [],
 };
