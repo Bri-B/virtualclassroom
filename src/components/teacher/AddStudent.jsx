@@ -113,14 +113,14 @@ export default function AddStudent({
 
 AddStudent.propTypes = {
   data: PropTypes.object,
-  list: PropTypes.object,
+  list: PropTypes.array,
   updateList: PropTypes.func,
   classList: PropTypes.array,
 };
 
 AddStudent.defaultProps = {
   data: {},
-  list: {},
+  list: [],
   updateList: '',
   classList: [],
 };
