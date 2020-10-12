@@ -16,10 +16,8 @@ export default function AnnouncementList({ data, user, classList }) {
 
   const grabAll = () => {
     const url = `${STUDENT_ROUTES.GET_ALL_ANNOUNCE_BY_STUDID}${data.id}`;
-    console.log(url);
     axios.get(url)
       .then((res) => {
-        console.log('data from ann', res.data);
         setList(res.data);
       })
       .catch((err) => console.error(err));
@@ -29,8 +27,6 @@ export default function AnnouncementList({ data, user, classList }) {
   // const deleteAnn = (e) => {
   //   // id, announcement_title, description, release_time, expiration_date, id_class,
   //   const value = JSON.parse(e.name);
-  //   console.log("----------------------------");
-  //   console.log(value);
   //   axios.delete('/teacher/delete/announcement', value)
   //     .then(() => grabAll())
   //     .catch(err => console.error(err));
