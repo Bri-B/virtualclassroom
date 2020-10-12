@@ -42,6 +42,7 @@ passport.use(
       callbackURL: `http://localhost:${process.env.SERVER_PORT}/auth/google/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
+      console.log('@@@@PASSPORT.USE');
       // accessToken, and refreshToken can be used for additional google products
       const data = {
         id: profile.id,

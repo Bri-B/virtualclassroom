@@ -53,7 +53,6 @@ export default function AddStudent({
   const onFinish = (values) => {
     grabAllSelectedClasses(values.selectMultiple, values.studentID);
   };
-
   return (
     <div>
       { showForm
