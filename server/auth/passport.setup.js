@@ -42,7 +42,6 @@ passport.use(
       callbackURL: `http://localhost:${process.env.SERVER_PORT}/auth/google/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log('@@@@PASSPORT.USE');
       // accessToken, and refreshToken can be used for additional google products
       const data = {
         id: profile.id,
@@ -63,9 +62,7 @@ passport.use(
           // else selected the user and pass them to the done function
           // returns and empty arr if no teacher found
           // signal that this is done
-          console.log('check user');
           if (results.length > 0) {
-            console.log('teacher');
             const teacher = results[0].dataValues;
             return done(null, { id: teacher.id, isTeacher: true }); // credentials valid
           }
@@ -75,13 +72,10 @@ passport.use(
             },
           })
             .then((res) => {
-              console.log('check user');
               if (res.length > 0) {
-                console.log('student');
                 const student = res[0].dataValues;
                 return done(null, { id: student.id, isStudent: true }); // credentials valid
               }
-              console.log('not user');
               return done(null, false); // unvalid credentials
             });
         })
