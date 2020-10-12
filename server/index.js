@@ -11,6 +11,7 @@ const passport = require('passport');
 // const { studentRouter } = require('./routes/student');
 const bodyParser = require('body-parser');
 const { teacherRouter } = require('./routes/teacher');
+const { studentRouter } = require('./routes/student');
 const models = require('./db/models/index');
 const passportRouter = require('./routes/auth');
 require('./auth/passport.setup');
@@ -39,11 +40,10 @@ const PORT = process.env.SERVER_PORT || 8080;
 // Routes
 app.use('/auth/google', passportRouter);
 app.use('/teacher', teacherRouter);
-// app.use('/student', studentRouter);
+app.use('/student', studentRouter);
 
 app.get('/login', (req, res) => {
   console.log(`Serving ${req.method} from ${req.url}`);
-  console.log('&&RES&&', req.user);
   res.json(req.user);
 });
 

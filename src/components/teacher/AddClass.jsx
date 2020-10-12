@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
-
 import {
   Form, DatePicker, TimePicker, Button, Input,
 } from 'antd';
+import { TEACHER_ROUTES } from '../../constants/routes';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const formItemLayout = {
   labelCol: {
@@ -19,7 +21,7 @@ const config = {
   rules: [{ type: 'object', required: true, message: 'Please select time!' }],
 };
 
-export default function AddClass() {
+export default function AddClass({ data, updateList }) {
   const [showForm, setShowForm] = useState(false);
   const [form] = Form.useForm();
 
@@ -37,9 +39,20 @@ export default function AddClass() {
       start_time: fieldsValue.start_time.format('HH:mm:ss'),
       end_time: fieldsValue.end_time.format('HH:mm:ss'),
     };
-    console.log('Received values of form: ', values);
-    alert('submitted');
-    setShowForm(false);
+    const url = TEACHER_ROUTES.POST_ADD_CLASS;
+    const newData = {
+      ...values,
+      id_school: data.id_school,
+      id_teacher: data.id,
+    };
+    console.log('Received values of form: ', newData);
+    axios.post(url, newData)
+      .then(() => {
+        updateList();
+        form.resetFields();
+        setShowForm(false);
+      })
+      .catch(err => console.error(err));
   };
 
   return (
@@ -98,3 +111,10 @@ export default function AddClass() {
     </div>
   );
 }
+AddClass.propTypes = {
+  data: PropTypes.object,
+};
+
+AddClass.defaultProps = {
+  data: {},
+};

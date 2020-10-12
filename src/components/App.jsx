@@ -13,17 +13,18 @@ const { Title } = Typography;
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [view, setView] = useState('');
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({});
 
   const logout = () => {
     setLoggedIn(false);
     axios.get('/logout')
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
   useEffect(() => {
     axios.get('/login')
       .then((res) => {
         const { data } = res;
+        console.log(data);
         if (data) {
           const { user } = data;
           setLoggedIn(true);
@@ -43,7 +44,7 @@ export default function App() {
               <Title className="logo" style={{ color: 'white', textAlign: 'left' }} level={3}>Virtual Classroom</Title>
             </Space>
           </Col>
-          <Col span={4}>
+          <Col style={{ textAlign: 'right' }} span={4}>
             { !loggedIn
               ? (
                 <Button
@@ -60,7 +61,7 @@ export default function App() {
                   className="logout"
                   type="primary"
                   size="large"
-                  onClick={logout}
+                  href="/logout"
                 >
                   Logout
                 </Button>

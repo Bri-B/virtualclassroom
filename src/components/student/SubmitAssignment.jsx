@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import DOMPurify from 'dompurify';
-import _ from 'lodash';
+import axios from 'axios';
+import { STUDENT_ROUTES } from '../../constants/routes';
 
 import {
   Form,
@@ -14,9 +14,17 @@ export default function SubmitAssignment() {
   const [showForm, setShowForm] = useState(false);
 
   const submitAssignment = (values) => {
+    //get all the assignments for that class
+    // select the assignment to grab the assignment id
+
     // post request to server to add assignment
     // console.log(assignment);
-    _.each(values, (value) => DOMPurify.sanitize(value))
+    // const url = PUT_SUBMIT_ASSIGN 
+    // //id_assignment, id_student, drive_url,
+    // axios.put(url)
+    // .then(() => {
+
+    // })
     console.log(values);
     alert('submitted');
     setShowForm(false);

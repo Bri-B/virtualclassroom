@@ -1,43 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Menu } from 'antd';
+import {
+  Menu, Modal, Form, TimePicker, Button, Input,
+} from 'antd';
+import axios from 'axios';
+import { TEACHER_ROUTES } from '../../constants/routes';
 
 const { SubMenu } = Menu;
 
-export default function ClassList({ user }) {
-  const [list, setList] = useState([]);
-  const data = [
-    {
-      id: 1,
-      class_name: 'math',
-      period: 1,
-      start_time: '10:00 am',
-      end_time: '11:00 am',
-      id_school: 1,
-      id_teacher: 1,
-      created_at: '10/7/2020',
-    },
-    {
-      id: 2,
-      class_name: 'english',
-      period: 2,
-      start_time: '10:00 am',
-      end_time: '11:00 am',
-      id_school: 1,
-      id_teacher: 1,
-      created_at: '10/7/2020',
-    },
-  ];
-  const grabData = () => data;
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const config = {
+  rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+};
 
-  const fetchData = async () => {
-    const result = await grabData();
-    setList(result);
+export default function ClassList({ data, list, updateList }) {
+  const [showForm, setShowForm] = useState(false);
+  const [form] = Form.useForm();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [selected, setSelected] = useState(null);
+
+  const onFinish = (fieldsValue) => {
+    // Grabbing the values from the form
+    const values = {
+      ...fieldsValue,
+      id_school: data.id_school,
+      id_teacher: data.id,
+      start_time: fieldsValue.start_time.format('HH:mm:ss'),
+      end_time: fieldsValue.end_time.format('HH:mm:ss'),
+    };
+    const [match] = list.filter((obj) => `${obj.id}` === values.id);
+    const url = `${TEACHER_ROUTES.PUT_UPDATE_CLASS}${match.id}`;
+    axios.put(url, values)
+      .then(() => {
+        updateList();
+      })
+      .then(() => {
+        form.resetFields();
+        setShowForm(false);
+      })
+      .catch((err) => console.error('editing class', err));
+  };
+  const onCancel = () => {
+    form.resetFields();
+    setShowForm(false);
   };
 
   useEffect(() => {
-    fetchData();
+    updateList();
   }, []);
+
+  const clickDelete = (e) => {
+    setSelected(e);
+    setConfirmDelete(true);
+  };
+
+  const deleteClass = (e) => {
+    const id = e.slice(0, e.indexOf('.'));
+    const url = `${TEACHER_ROUTES.DELETE_CLASS}${id}`;
+    axios.delete(url)
+      .then(() => {
+        updateList();
+        setConfirmDelete(false);
+      })
+      .catch((err) => console.error('editing class', err));
+  };
 
   return (
     <Menu
@@ -46,19 +81,105 @@ export default function ClassList({ user }) {
       defaultOpenKeys={['sub1']}
       style={{ height: '100%', borderRight: 0 }}
     >
-      {list.map((obj, key) => (
+      {list && (list.map((obj, key) => (
         <SubMenu key={key} title={obj.class_name}>
-          <Menu.Item key="1" onClick={() => { console.log(obj.class_name, 'edit'); }}>{user === 'teacher' ? 'Edit' : 'Teacher'}</Menu.Item>
-          <Menu.Item key="2" onClick={() => { console.log(obj.class_name, 'delete'); }}>{user === 'teacher' ? 'Delete' : 'Period'}</Menu.Item>
+          <Menu.Item key={`${obj.id}.1`}>{`ID: ${obj.id}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.2`}>{`Period: ${obj.period}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.3`}>{`Start Time: ${obj.start_time}`}</Menu.Item>
+          <Menu.Item key={`${obj.id}.4`}>{`End Time: ${obj.end_time}`}</Menu.Item>
+          {data.user === 'teacher' && <Menu.Item key={`${obj.id}.5`} onClick={() => { setShowForm(true); }}>'Edit'</Menu.Item>}
+          {data.user === 'teacher' && <Menu.Item key={`${obj.id}.6`} onClick={({ key }) => clickDelete(key)}>'Delete'</Menu.Item>}
         </SubMenu>
-      ))}
+      )))}
+      <Modal
+        title="Confirm Delete"
+        visible={confirmDelete}
+        onOk={() => deleteClass(selected)}
+        onCancel={() => setConfirmDelete(false)}
+        okText="Delete"
+      >
+        <p>Are you sure you want to delete?</p>
+      </Modal>
+      <Modal
+        title="Edit Class"
+        centered
+        width={750}
+        style={{ top: 20 }}
+        visible={showForm}
+        onOk={onFinish}
+        onCancel={() => setShowForm(false)}
+        okButtonProps={{ disabled: true, style: { display: 'none' } }}
+        cancelButtonProps={{ disabled: true, style: { display: 'none' } }}
+      >
+        <p>Not sure? Check the drop down on the left.</p>
+        <Form
+          name="validate_other"
+          {...formItemLayout}
+          form={form}
+          onFinish={onFinish}
+        >
+          <Form.Item
+            label="New or Current Class ID"
+            name="id"
+            rules={[{ required: true, message: 'Please input the class id!' }]}
+          >
+            <Input
+              placeholder="Whole Number Example: 1 or 12"
+            />
+          </Form.Item>
+          <Form.Item
+            label="New or Current Class Name"
+            name="class_name"
+            rules={[{ required: true, message: 'Please input the class id!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="New or Current New Period"
+            name="period"
+            rules={[{ required: true, message: 'Please input the class name!' }]}
+          >
+            <Input
+              placeholder="Whole Number Example: 1 or 12"
+            />
+          </Form.Item>
+          <Form.Item name="start_time" label="New or Current Start Time" {...config}>
+            <TimePicker use12Hours format="h:mm:ss A" />
+          </Form.Item>
+          <Form.Item name="end_time" label="New or Current End Time" {...config}>
+            <TimePicker use12Hours format="h:mm:ss A" />
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              xs: { span: 24, offset: 0 },
+              sm: { span: 16, offset: 8 },
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              xs: { span: 24, offset: 0 },
+              sm: { span: 16, offset: 8 },
+            }}
+          >
+            <Button type="dotted" htmlType="cancel" onClick={onCancel}>
+              Cancel
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </Menu>
   );
 }
 ClassList.propTypes = {
+  data: PropTypes.object,
   user: PropTypes.string,
 };
 
 ClassList.defaultProps = {
+  data: {},
   user: '',
 };

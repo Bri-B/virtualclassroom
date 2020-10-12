@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Assignment = sequelize.define('assignment', {
     assignment_name: {
       type: DataTypes.STRING,
+      unique: true,
     },
     description: {
       type: DataTypes.STRING,

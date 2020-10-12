@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
 import {
   Form,
@@ -8,6 +10,7 @@ import {
   Button,
   Modal,
 } from 'antd';
+import { TEACHER_ROUTES } from '../../constants/routes';
 
 const { Option } = Select;
 
@@ -16,36 +19,51 @@ const formItemLayout = {
   wrapperCol: { span: 14 },
 };
 
-export default function AddStudent() {
+export default function AddStudent({
+  list, updateList, data, classList,
+}) {
   const [showForm, setShowForm] = useState(false);
   const [classNames, setClassNames] = useState([]);
 
-  const grabClassList = () => new Promise((resolve) => resolve(['math', 'science']));
-  const fetchClassList = async () => {
-    const arrOfNames = await grabClassList();
-    setClassNames(arrOfNames);
+  // post to add student and class
+  // reload student list again
+
+  const newStudent = (sID, cID) => {
+    // add student called for each class
+    const url = `${TEACHER_ROUTES.PUT_ADD_STUDENT_TO_CLASS}${sID}/${cID}`;
+    axios.put(url)
+      .then(() => {
+        setShowForm(false);
+      });
+  };
+
+  const grabAllSelectedClasses = (selectedClasses, sID) => {
+    selectedClasses.forEach((cLass) => {
+      const course = classList.filter((item) => item.class_name === cLass);
+      const courseID = course[0].id;
+      newStudent(sID, courseID);
+    });
   };
 
   useEffect(() => {
-    fetchClassList();
-  }, []);
+    const names = classList.map((cLass) => cLass.class_name);
+    setClassNames(names);
+  }, [classList]);
 
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
-    alert('submitted');
-    setShowForm(false);
+    grabAllSelectedClasses(values.selectMultiple, values.studentID);
   };
   return (
     <div>
       { showForm
         ? (
           <Modal
-            title="Modal 1000px width"
+            title="Add Student"
             centered
             style={{ top: 20 }}
             visible={showForm}
-            onOk={onFinish}
-            onCancel={() => setShowForm(false)}
+            okButtonProps={{ disabled: true, style: { display: 'none' } }}
+            cancelButtonProps={{ disabled: true, style: { display: 'none' } }}
             width={1000}
           >
             <Form
@@ -53,20 +71,37 @@ export default function AddStudent() {
               {...formItemLayout}
               onFinish={onFinish}
             >
-              <Form.Item name="fullName" label="Fullname" rules={[{ required: true }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="email" label="Email" rules={[{ type: 'email', required: true }]}>
+              <Form.Item name="studentID" label="Student ID" required={true}>
                 <Input />
               </Form.Item>
               <Form.Item
-                name="select-multiple"
-                label="Select[multiple]"
+                name="selectMultiple"
+                label="Select Multiple"
                 rules={[{ required: true, message: 'Please select at least one class', type: 'array' }]}
               >
                 <Select mode="multiple" placeholder="Please select classes">
-                  {classNames.map((name, index) => <Option key={index} value={name}>name</Option>)}
+                  {classNames.map((name, index) => <Option key={index} value={name}>{name}</Option>)}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  s: { span: 16, offset: 8 },
+                  xs: { span: 24, offset: 0 },
+                }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  s: { span: 16, offset: 8 },
+                  xs: { span: 24, offset: 0 },
+                }}
+              >
+                <Button type="dotted" htmlType="cancel" onCancel={() => setShowForm(false)}>
+                  Cancel
+                </Button>
               </Form.Item>
             </Form>
           </Modal>
@@ -75,3 +110,17 @@ export default function AddStudent() {
     </div>
   );
 }
+
+AddStudent.propTypes = {
+  data: PropTypes.object,
+  list: PropTypes.object,
+  updateList: PropTypes.func,
+  classList: PropTypes.array,
+};
+
+AddStudent.defaultProps = {
+  data: {},
+  list: {},
+  updateList: '',
+  classList: [],
+};
