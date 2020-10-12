@@ -4,9 +4,9 @@ import {
 } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import AddAnnouncement from '../teacher/AddAnnouncement';
 import axios from 'axios';
-import { STUDENT_ROUTES } from '../../constants/routes';
+import AddAnnouncement from '../teacher/AddAnnouncement';
+import { STUDENT_ROUTES, TEACHER_ROUTES } from '../../constants/routes';
 
 const { Title } = Typography;
 
@@ -18,12 +18,24 @@ export default function AnnouncementList({ data, user, classList }) {
     const url = `${STUDENT_ROUTES.GET_ALL_ANNOUNCE_BY_STUDID}${data.id}`;
     console.log(url);
     axios.get(url)
-      .then(res => {
-        console.log("data from ann", res.data)
-        setList(res.data)
+      .then((res) => {
+        console.log('data from ann', res.data);
+        setList(res.data);
       })
-      .catch(err => console.error(err));
-  }
+      .catch((err) => console.error(err));
+  };
+  
+  // Not working 500 error
+  // const deleteAnn = (e) => {
+  //   // id, announcement_title, description, release_time, expiration_date, id_class,
+  //   const value = JSON.parse(e.name);
+  //   console.log("----------------------------");
+  //   console.log(value);
+  //   axios.delete('/teacher/delete/announcement', value)
+  //     .then(() => grabAll())
+  //     .catch(err => console.error(err));
+  // };
+
   useEffect(() => {
     grabAll();
   }, []);
@@ -45,19 +57,19 @@ export default function AnnouncementList({ data, user, classList }) {
                 dataSource={list}
                 renderItem={(item) => (
                   <List.Item
-                    actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-delete">delete</a>]}
+                    // actions={[<a key="list-loadmore-delete" name={JSON.stringify(item)} onClick={(e) => deleteAnn(e.target)}>delete</a>]}
                   >
                     {/* <Skeleton title={false} loading={loading} active avatar> */}
-                      <List.Item.Meta
-                        title={<a href="#">{item.announcement_title}</a>}
-                        description={item.description}
-                      />
-                      <span>
-                        {' '}
-                        Released at:
-                        {' '}
-                        {moment(list.release_time).format('llll')}
-                      </span>
+                    <List.Item.Meta
+                      title={<a href="#">{item.announcement_title}</a>}
+                      description={item.description}
+                    />
+                    <span>
+                      {' '}
+                      Released at:
+                      {' '}
+                      {moment(list.release_time).format('llll')}
+                    </span>
                     {/* </Skeleton> */}
                   </List.Item>
                 )}
@@ -72,16 +84,16 @@ export default function AnnouncementList({ data, user, classList }) {
                 renderItem={(item) => (
                   <List.Item>
                     {/* <Skeleton title={false} loading={loading} active avatar> */}
-                      <List.Item.Meta
-                        title={<a href="#">{item.announcement_title}</a>}
-                        description={item.description}
-                      />
-                      <span>
-                        {' '}
-                        Released at:
-                        {' '}
-                        {moment(list.release_time).format('llll')}
-                      </span>
+                    <List.Item.Meta
+                      title={<a href="#">{item.announcement_title}</a>}
+                      description={item.description}
+                    />
+                    <span>
+                      {' '}
+                      Released at:
+                      {' '}
+                      {moment(list.release_time).format('llll')}
+                    </span>
                     {/* </Skeleton> */}
                   </List.Item>
                 )}

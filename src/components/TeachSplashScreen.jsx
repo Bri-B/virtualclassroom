@@ -72,7 +72,7 @@ export default function TeachSplashScreen({ data, user }) {
           </Row>
           <Divider />
           <Row>
-            <AssignmentList data={data} user={user} />
+            <AssignmentList data={data} user={user} classList={classList} />
           </Row>
         </Content>
         <Sider

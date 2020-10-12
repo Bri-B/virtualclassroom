@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
-
+import axios from 'axios';
 import {
-  Form, DatePicker, TimePicker, Button, Input,
+  Form, Table, Button, Input, DatePicker,
 } from 'antd';
+import PropTypes from 'prop-types';
+import { TEACHER_ROUTES } from '../../constants/routes';
 
-const { RangePicker } = DatePicker;
+const config = {
+  rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+};
 
 const formItemLayout = {
   labelCol: {
@@ -17,13 +21,35 @@ const formItemLayout = {
     sm: { span: 16 },
   },
 };
-const rangeConfig = {
-  rules: [{ type: 'array', required: true, message: 'Please select time!' }],
-};
 
-export default function AddAssignment() {
+const columns = [
+  {
+    title: 'Pick which classes the Assignment should be released.',
+    dataIndex: 'name',
+    render: (text) => <a>{text}</a>,
+  },
+];
+
+export default function AddAssignment({ classList, grabAll }) {
   const [showForm, setShowForm] = useState(false);
+  const [clickedRow, setClickedRow] = useState([]);
   const [form] = Form.useForm();
+
+  // rowSelection object indicates the need for row selection
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setClickedRow(selectedRows);
+    },
+    getCheckboxProps: (record) => ({
+      disabled: record.name === 'Disabled User', // Column configuration not to be checked
+      name: record.name,
+    }),
+  };
+
+  const dataArr = classList.map((classObj) => ({
+    key: classObj.id,
+    name: classObj.class_name,
+  }));
 
   const onCancel = () => {
     form.resetFields();
@@ -31,19 +57,24 @@ export default function AddAssignment() {
     setShowForm(false);
   };
 
+  const postAssignment = (postData) => {
+    const url = `${TEACHER_ROUTES.POST_ASSIGN}`;
+    axios.post(url, postData)
+      .then(() => {
+        grabAll();
+        setShowForm(false);
+      })
+      .catch((err) => console.error('add Assignment', err));
+  };
   const onFinish = (fieldsValue) => {
     // Should format date value before submit.
-    const rangeTimeValue = fieldsValue['range-time-picker'];
     const values = {
       ...fieldsValue,
-      'range-time-picker': [
-        rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
-        rangeTimeValue[1].format('YYYY-MM-DD HH:mm:ss'),
-      ],
+      due_date: fieldsValue.due_date.format('YYYY-MM-DD HH:mm:ss'),
+      release_time: 'Start of Class',
+      id_class: clickedRow.map((row) => row.key),
     };
-    console.log('Received values of form: ', values);
-    alert('submitted');
-    setShowForm(false);
+    postAssignment(values);
   };
 
   return (
@@ -66,9 +97,19 @@ export default function AddAssignment() {
             <Form.Item name="description" label="Description">
               <Input.TextArea />
             </Form.Item>
-            <Form.Item name="range-time-picker" label="RangePicker[showTime]" {...rangeConfig}>
-              <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            <Form.Item name="due_date" label="Due Date" {...config}>
+              <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
             </Form.Item>
+            <div>
+              <Table
+                rowSelection={{
+                  type: 'checkbox',
+                  ...rowSelection,
+                }}
+                columns={columns}
+                dataSource={dataArr}
+              />
+            </div>
             <Form.Item
               wrapperCol={{
                 xs: { span: 24, offset: 0 },
@@ -96,3 +137,12 @@ export default function AddAssignment() {
 
   );
 }
+
+AddAssignment.propTypes = {
+  classList: PropTypes.array,
+  grabAll: PropTypes.func,
+};
+
+AddAssignment.defaultProps = {
+  classList: [],
+};
