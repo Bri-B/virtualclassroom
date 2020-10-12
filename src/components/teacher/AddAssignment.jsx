@@ -89,7 +89,7 @@ export default function AddAssignment({ classList, grabAll }) {
           >
             <Form.Item
               label="Assignment Title"
-              name="assignment_title"
+              name="assignment_name"
               rules={[{ required: true, message: 'Please input the title!' }]}
             >
               <Input />

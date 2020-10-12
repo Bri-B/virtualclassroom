@@ -401,59 +401,59 @@ teacherRouter.delete('/classes/:classID', (req, res) => {
     .catch((err) => {
       res.status(500).send(err);
     });
+});
 
-  // create assignment (send class id's as array)
-  teacherRouter.post('/create/assignment', (req, res) => {
-    const {
-      assignment_name, description, due_date, release_time, id_class,
-    } = req.body;
-    const classIDS = [];
-    const studentIDS = [];
-    let assignmentID;
-    Assignment.create({
-      assignment_name, description, due_date, release_time,
-    })
-      .then((assignment) => {
+// create assignment (send class id's as array)
+teacherRouter.post('/create/assignment', (req, res) => {
+  const {
+    assignment_name, description, due_date, release_time, id_class,
+  } = req.body;
+  const classIDS = [];
+  const studentIDS = [];
+  let assignmentID;
+  Assignment.create({
+    assignment_name, description, due_date, release_time,
+  })
+    .then((assignment) => {
       // grab assignment id
-        const { id } = assignment.dataValues;
-        id_class.map((classid) => {
-          classIDS.push(classid);
-          Assignment_class.findOrCreate({
-            where: {
-              id_assignment: id,
-              id_class: classid,
-            },
-          });
-          Student_class.findAll({
-            where: {
-              id_class: classid,
-            },
+      const { id } = assignment.dataValues;
+      id_class.map((classid) => {
+        classIDS.push(classid);
+        Assignment_class.findOrCreate({
+          where: {
+            id_assignment: id,
+            id_class: classid,
+          },
+        });
+        Student_class.findAll({
+          where: {
+            id_class: classid,
+          },
+        })
+          .then((scAssoc) => {
+            scAssoc.map((singleAssoc) => {
+              studentIDS.push(singleAssoc.dataValues.id_student);
+            });
           })
-            .then((scAssoc) => {
-              scAssoc.map((singleAssoc) => {
-                studentIDS.push(singleAssoc.dataValues.id_student);
-              });
-            })
-            .then(() => {
-              studentIDS.map((student) => {
-                Assignment_student.findOrCreate({
-                  where: {
-                    id_assignment: id,
-                    id_student: student,
-                  },
-                });
+          .then(() => {
+            studentIDS.map((student) => {
+              Assignment_student.findOrCreate({
+                where: {
+                  id_assignment: id,
+                  id_student: student,
+                },
               });
             });
-        });
-      })
-      .then(() => {
-        res.send('assignment created');
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send(err);
+          });
       });
-  });
+    })
+    .then(() => {
+      res.send('assignment created');
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(err);
+    });
 });
 module.exports = {
   teacherRouter,
