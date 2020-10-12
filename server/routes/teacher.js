@@ -249,34 +249,6 @@ teacherRouter.delete('/delete/announcement', (req, res) => {
       res.status(500).send(err);
     });
 });
-// create assignment (send class id's as array)
-// id students? teacher able to see students assignments?
-teacherRouter.post('/create/assignment', (req, res) => {
-  const {
-    assignment_name, description, due_date, release_time, id_class,
-  } = req.body;
-  Assignment.create({
-    assignment_name, description, due_date, release_time,
-  })
-    .then((assignment) => {
-      const { id } = assignment.dataValues;
-      id_class.map((classid) => {
-        Assignment_class.findOrCreate({
-          where: {
-            id_assignment: id,
-            id_class: classid,
-          },
-        });
-      });
-    })
-    .then((assignment) => {
-      res.send(assignment);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send(err);
-    });
-});
 // get all assignments for a class
 teacherRouter.get('/assignment/:classID', (req, res) => {
   const { classID } = req.params;
