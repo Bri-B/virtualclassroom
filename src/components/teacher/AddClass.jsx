@@ -45,7 +45,6 @@ export default function AddClass({ data, updateList }) {
       id_school: data.id_school,
       id_teacher: data.id,
     };
-    console.log('Received values of form: ', newData);
     axios.post(url, newData)
       .then(() => {
         updateList();
