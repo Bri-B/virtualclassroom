@@ -43,12 +43,10 @@ app.use('/teacher', teacherRouter);
 app.use('/student', studentRouter);
 
 app.get('/login', (req, res) => {
-  console.log(`Serving ${req.method} from ${req.url}`);
   res.json(req.user);
 });
 
 app.get('/logout', (req, res) => {
-  console.log(`Serving ${req.method} from ${req.url}`);
   // req.session.passport = null;
   req.logOut(); // logout from passport
   req.session = null; // destory the session
@@ -56,7 +54,6 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/*', (req, res) => {
-  console.log(`Serving ${req.method} from ${req.url}`);
   res.sendFile(HTML_FILE);
 });
 
