@@ -5,7 +5,6 @@ import {
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import axios from 'axios';
-import SubmitAssignment from '../student/SubmitAssignment';
 import AddAssignment from '../teacher/AddAssignment';
 import { STUDENT_ROUTES } from '../../constants/routes';
 
@@ -59,7 +58,6 @@ export default function AssignmentList({ data, user }) {
         <Col span={12}>
           <Title className="list" style={{ color: 'rgba(0, 0, 0, 0.85)', marginRight: '32px' }} level={3}>Assignment List</Title>
         </Col>
-        {user === 'teacher' ? <Col style={{ textAlign: 'right' }} span={12}><AddAssignment /></Col> : <Col><SubmitAssignment /></Col>}
         <Col span={24}>
           {user === 'teacher'
             ? (
@@ -74,7 +72,7 @@ export default function AssignmentList({ data, user }) {
                   >
                     {/* <Skeleton title={false} loading={loading} active avatar> */}
                     <List.Item.Meta
-                      title={<a href="#">{item.Assignment_title}</a>}
+                      title={<a href="#">{item.assignment_name}</a>}
                       description={item.description}
                     />
                     <span>
