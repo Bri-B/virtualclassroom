@@ -3,22 +3,34 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 require('dotenv').config();
 
+const {
+  Teacher, Student,
+} = require('../db/models/index');
+
 passport.serializeUser((user, done) => {
-  // Setting user obj on req.session
+  // Setting userId obj on req.session
   done(null, user);
 });
 
 passport.deserializeUser((user, done) => {
-  // present user obj to use to find things in the db
-  const data = {
-    id: user.id,
-    fullName: user.displayName,
-    lastName: user.name.familyName,
-    firstName: user.name.givenName,
-    email: user.emails[0].value,
-    photo: user.photos[0].value,
-  };
-  done(null, user);
+  if (user.isTeacher) {
+    Teacher.findByPk(user.id)
+      .then((teacher) => {
+        done(null, { user: 'teacher', ...teacher.dataValues });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  } else if (user.isStudent) {
+    Student.findByPk(user.id)
+      .then((student) => {
+        done(null, { user: 'student', ...student.dataValues });
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send(err);
+      });
+  }
 });
 
 // defining how passport will use google strategy
@@ -40,9 +52,41 @@ passport.use(
         photo: profile.photos[0].value,
       };
       // use the profile info (profile id) to check if the user is registered in the db
-      // if the user doesn't exists, save to db, else selected the user and pass them to the done function
-      // signal that this is done
-      return done(null, profile);
+      Teacher.findAll({
+        where: {
+          email: data.email,
+        },
+      })
+        .then((results) => {
+          // if the user doesn't exists, save to db,
+          // else selected the user and pass them to the done function
+          // returns and empty arr if no teacher found
+          // signal that this is done
+          console.log('check user');
+          if (results.length > 0) {
+            console.log('teacher');
+            const teacher = results[0].dataValues;
+            return done(null, { id: teacher.id, isTeacher: true }); // credentials valid
+          }
+          Student.findAll({
+            where: {
+              email: data.email,
+            },
+          })
+            .then((res) => {
+              console.log('check user');
+              if (res.length > 0) {
+                console.log('student');
+                const student = res[0].dataValues;
+                return done(null, { id: student.id, isStudent: true }); // credentials valid
+              }
+              console.log('not user');
+              return done(null, false); // unvalid credentials
+            });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   ),
 );

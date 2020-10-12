@@ -12,9 +12,11 @@ router.get(
   '/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
+    console.log('!!!!PASSPORT.CALLBACK', req.user);
     // Unsuccessful authentication redirect home.
     // Successful authentication redirect to account
-    res.redirect('/account');
+    // This should be expanded to check for students as well in the future
+    res.redirect('/');
   },
 );
 

@@ -1,24 +1,47 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 
+import {
+  Form, DatePicker, TimePicker, Button, Input,
+} from 'antd';
+
+const { RangePicker } = DatePicker;
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const rangeConfig = {
+  rules: [{ type: 'array', required: true, message: 'Please select time!' }],
+};
+
 export default function AddAssignment() {
   const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [releaseTime, setReleaseTime] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [form] = Form.useForm();
 
-  const addAssignment = () => {
-    const date = new Date();
-    // post request to server to add assignment
-    const formSubmit = {
-      title,
-      description,
-      releaseTime,
-      dueDate,
-      createdAt: date,
+  const onCancel = () => {
+    form.resetFields();
+    alert('canceled');
+    setShowForm(false);
+  };
+
+  const onFinish = (fieldsValue) => {
+    // Should format date value before submit.
+    const rangeTimeValue = fieldsValue['range-time-picker'];
+    const values = {
+      ...fieldsValue,
+      'range-time-picker': [
+        rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
+        rangeTimeValue[1].format('YYYY-MM-DD HH:mm:ss'),
+      ],
     };
-    // console.log(formSubmit);
+    console.log('Received values of form: ', values);
     alert('submitted');
     setShowForm(false);
   };
@@ -27,61 +50,49 @@ export default function AddAssignment() {
     <div>
       { showForm
         ? (
-          <form onSubmit={addAssignment}>
-            <label>
-              Title:
-              <input
-                name="title"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setTitle(clean);
-                }}
-              />
-            </label>
-            <br />
-            <label>
-              Description:
-              <textarea
-                name="description"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setDescription(clean);
-                }}
-              />
-            </label>
-            <label>
-              Release Time:
-              <input
-                name="releaseTime"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setReleaseTime(clean);
-                }}
-              />
-            </label>
-            <br />
-            <label>
-              Expiration Date:
-              <input
-                name="title"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setDueDate(clean);
-                }}
-              />
-            </label>
-            <button type="submit">Submit</button>
-          </form>
+          <Form
+            form={form}
+            name="time_related_controls"
+            {...formItemLayout}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Assignment Title"
+              name="assignment_title"
+              rules={[{ required: true, message: 'Please input the title!' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name="description" label="Description">
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item name="range-time-picker" label="RangePicker[showTime]" {...rangeConfig}>
+              <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                xs: { span: 24, offset: 0 },
+                sm: { span: 16, offset: 8 },
+              }}
+            >
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                xs: { span: 24, offset: 0 },
+                sm: { span: 16, offset: 8 },
+              }}
+            >
+              <Button type="dotted" htmlType="cancel" onClick={onCancel}>
+                Cancel
+              </Button>
+            </Form.Item>
+          </Form>
         )
-        : (<button type="button" onClick={() => setShowForm(true)}>Add assignment</button>)}
+        : (<Button type="Button" onClick={() => setShowForm(true)}>Add Assignment</Button>)}
     </div>
+
   );
 }

@@ -1,60 +1,104 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
+import {
+  List, Typography, Skeleton, Row, Col,
+} from 'antd';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import AddAnnouncement from '../teacher/AddAnnouncement';
+import axios from 'axios';
+import { STUDENT_ROUTES } from '../../constants/routes';
 
-export default function AnnouncementList({ user }) {
+const { Title } = Typography;
+
+export default function AnnouncementList({ data, user }) {
   const [list, setList] = useState([]);
-  const data = [
-    {
-      id: 1,
-      announcement_title: 'test',
-      description: 'math final assessment',
-      release_time: '10/8/2020',
-      expiration_date: '10/10/2020',
-      created_at: '10/6/2020',
-    },
-    {
-      id: 2,
-      announcement_title: 'test2',
-      description: 'math final assessment2',
-      release_time: '10/8/2020',
-      expiration_date: '10/10/2020',
-      created_at: '10/6/2020',
-    },
-  ];
-  const grabData = () => data;
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
-    const result = await grabData();
-    // console.log(result);
-    setList(result);
-  };
-
+  const grabAll = () => {
+    const url = `${STUDENT_ROUTES.GET_ALL_ANNOUNCE_BY_STUDID}${data.id}`;
+    console.log(url);
+    axios.get(url)
+      .then(res => {
+        console.log("data from ann", res.data)
+        setList(res.data)
+      })
+      .catch(err => console.error(err));
+  }
   useEffect(() => {
-    fetchData();
+    grabAll();
   }, []);
+
   return (
-    <div>
-      {user === 'teacher' && <AddAnnouncement />}
-      {list.length > 0
-        && (
-        <ul>
-          All Announcement
-          {list.map((obj, key1) => (
-            <li key={key1}>
-              {_.map(obj, (item, key2) => <p key={key2}>{item}</p>)}
-            </li>
-          ))}
-        </ul>
-        )}
-    </div>
+    <>
+      <Row style={{ width: '100%' }}>
+        <Col span={12}>
+          <Title className="list" style={{ color: 'rgba(0, 0, 0, 0.85)', marginRight: '32px' }} level={3}>Announcement List</Title>
+        </Col>
+        {user === 'teacher' && <Col style={{ textAlign: 'right' }} span={12}><AddAnnouncement /></Col>}
+        <Col span={24}>
+          {user === 'teacher'
+            ? (
+              <List
+                className="demo-loadmore-list"
+                // loading={loading}
+                itemLayout="horizontal"
+                dataSource={list}
+                renderItem={(item) => (
+                  <List.Item
+                    actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-delete">delete</a>]}
+                  >
+                    {/* <Skeleton title={false} loading={loading} active avatar> */}
+                      <List.Item.Meta
+                        title={<a href="#">{item.announcement_title}</a>}
+                        description={item.description}
+                      />
+                      <span>
+                        {' '}
+                        Released at:
+                        {' '}
+                        {moment(list.release_time).format('llll')}
+                      </span>
+                    {/* </Skeleton> */}
+                  </List.Item>
+                )}
+              />
+            )
+            : (
+              <List
+                className="demo-loadmore-list"
+                // loading={loading}
+                itemLayout="horizontal"
+                dataSource={list}
+                renderItem={(item) => (
+                  <List.Item>
+                    {/* <Skeleton title={false} loading={loading} active avatar> */}
+                      <List.Item.Meta
+                        title={<a href="#">{item.announcement_title}</a>}
+                        description={item.description}
+                      />
+                      <span>
+                        {' '}
+                        Released at:
+                        {' '}
+                        {moment(list.release_time).format('llll')}
+                      </span>
+                    {/* </Skeleton> */}
+                  </List.Item>
+                )}
+              />
+            )}
+        </Col>
+      </Row>
+    </>
   );
 }
+
 AnnouncementList.propTypes = {
   user: PropTypes.string,
+  data: PropTypes.object,
 };
 
 AnnouncementList.defaultProps = {
   user: '',
+  data: {},
 };

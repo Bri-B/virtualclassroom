@@ -1,87 +1,120 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
+import {
+  Form, DatePicker, TimePicker, Button, Input,
+} from 'antd';
+import { TEACHER_ROUTES } from '../../constants/routes';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
-export default function AddClass() {
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const config = {
+  rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+};
+
+export default function AddClass({ data, updateList }) {
   const [showForm, setShowForm] = useState(false);
-  const [className, setClassName] = useState('');
-  const [period, setPeriod] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [form] = Form.useForm();
 
-  const addClass = () => {
-    const date = new Date();
-    // post request to server to add class
-    const formSubmit = {
-      className,
-      period,
-      startTime,
-      endTime,
-      createdAt: date,
-    };
-    // console.log(formSubmit);
-    alert('submitted');
+  const onCancel = () => {
+    form.resetFields();
+    alert('canceled');
     setShowForm(false);
+  };
+
+  const onFinish = (fieldsValue) => {
+    // Should format date value before submit.
+    const values = {
+      ...fieldsValue,
+      // class_name,
+      start_time: fieldsValue.start_time.format('HH:mm:ss'),
+      end_time: fieldsValue.end_time.format('HH:mm:ss'),
+    };
+    const url = TEACHER_ROUTES.POST_ADD_CLASS;
+    const newData = {
+      ...values,
+      id_school: data.id_school,
+      id_teacher: data.id,
+    };
+    console.log('Received values of form: ', newData);
+    axios.post(url, newData)
+      .then(() => {
+        updateList();
+        form.resetFields();
+        setShowForm(false);
+      })
+      .catch(err => console.error(err));
   };
 
   return (
     <div>
       { showForm
         ? (
-          <form onSubmit={addClass}>
-            <label>
-              className:
-              <input
-                name="className"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setClassName(clean);
-                }}
-              />
-            </label>
-            <br />
-            <label>
-              period:
-              <textarea
-                name="period"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setPeriod(clean);
-                }}
-              />
-            </label>
-            <label>
-              Release Time:
-              <input
-                name="startTime"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setStartTime(clean);
-                }}
-              />
-            </label>
-            <br />
-            <label>
-              Expiration Date:
-              <input
-                name="className"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setEndTime(clean);
-                }}
-              />
-            </label>
-            <button type="submit">Submit</button>
-          </form>
+          <Form
+            name="time_related_controls"
+            {...formItemLayout}
+            form={form}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Class Name"
+              name="class_name"
+              rules={[{ required: true, message: 'Please input the class name!' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Period"
+              name="period"
+              rules={[{ required: true, message: 'Please input the class name!' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name="start_time" label="Start Time" {...config}>
+              <TimePicker use12Hours format="h:mm:ss A" />
+            </Form.Item>
+            <Form.Item name="end_time" label="End Time" {...config}>
+              <TimePicker use12Hours format="h:mm:ss A" />
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                xs: { span: 24, offset: 0 },
+                sm: { span: 16, offset: 8 },
+              }}
+            >
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                xs: { span: 24, offset: 0 },
+                sm: { span: 16, offset: 8 },
+              }}
+            >
+              <Button type="dotted" htmlType="cancel" onClick={onCancel}>
+                Cancel
+              </Button>
+            </Form.Item>
+          </Form>
         )
-        : (<button type="button" onClick={() => setShowForm(true)}>Add class</button>)}
+        : (<Button type="primary" htmlType="submit" onClick={() => setShowForm(true)}> Add Class </Button>)}
     </div>
   );
 }
+AddClass.propTypes = {
+  data: PropTypes.object,
+};
+
+AddClass.defaultProps = {
+  data: {},
+};

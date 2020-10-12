@@ -1,97 +1,127 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import _ from 'lodash';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
-export default function AddStudent() {
+import {
+  Form,
+  Select,
+  Input,
+  Button,
+  Modal,
+} from 'antd';
+import { TEACHER_ROUTES } from '../../constants/routes';
+
+const { Option } = Select;
+
+const formItemLayout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 14 },
+};
+
+export default function AddStudent({
+  list, updateList, data, classList,
+}) {
   const [showForm, setShowForm] = useState(false);
-  const [period, setPeriod] = useState('');
-  const [email, setEmail] = useState('');
   const [classNames, setClassNames] = useState([]);
-  const [endTime, setEndTime] = useState('');
-  const [selectedNames, setSelectedNames] = useState([]);
 
-  const grabClassList = () => new Promise((resolve) => resolve(['math', 'science']));
-  const fetchClassList = async () => {
-    const arrOfNames = await grabClassList();
-    setClassNames(arrOfNames);
+  // post to add student and class
+  // reload student list again
+
+  const newStudent = (sID, cID) => {
+    // add student called for each class
+    const url = `${TEACHER_ROUTES.PUT_ADD_STUDENT_TO_CLASS}${sID}/${cID}`;
+    axios.put(url)
+      .then(() => {
+        setShowForm(false);
+      });
+  };
+
+  const grabAllSelectedClasses = (selectedClasses, sID) => {
+    selectedClasses.forEach((cLass) => {
+      const course = classList.filter((item) => item.class_name === cLass);
+      const courseID = course[0].id;
+      newStudent(sID, courseID);
+    });
   };
 
   useEffect(() => {
-    fetchClassList();
-  }, []);
+    const names = classList.map((cLass) => cLass.class_name);
+    setClassNames(names);
+  }, [classList]);
 
-  const addStudent = () => {
-    const date = new Date();
-    // post request to server to add class
-    const formSubmit = {
-      period,
-      email,
-      classNames,
-      endTime,
-      createdAt: date,
-    };
-    // console.log(formSubmit);
-    alert('submitted');
-    setShowForm(false);
+  const onFinish = (values) => {
+    grabAllSelectedClasses(values.selectMultiple, values.studentID);
   };
 
   return (
     <div>
       { showForm
         ? (
-          <form onSubmit={addStudent}>
-            <h2>Add Student</h2>
-            <label>
-              period:
-              <input
-                name="period"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setPeriod(clean);
+          <Modal
+            title="Add Student"
+            centered
+            style={{ top: 20 }}
+            visible={showForm}
+            okButtonProps={{ disabled: true, style: { display: 'none' } }}
+            cancelButtonProps={{ disabled: true, style: { display: 'none' } }}
+            width={1000}
+          >
+            <Form
+              name="validate_other"
+              {...formItemLayout}
+              onFinish={onFinish}
+            >
+              <Form.Item name="studentID" label="Student ID" required={true}>
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="selectMultiple"
+                label="Select Multiple"
+                rules={[{ required: true, message: 'Please select at least one class', type: 'array' }]}
+              >
+                <Select mode="multiple" placeholder="Please select classes">
+                  {classNames.map((name, index) => <Option key={index} value={name}>{name}</Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  s: { span: 16, offset: 8 },
+                  xs: { span: 24, offset: 0 },
                 }}
-              />
-            </label>
-            <br />
-            <label>
-              email:
-              <input
-                name="email"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setEmail(clean);
+              >
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  s: { span: 16, offset: 8 },
+                  xs: { span: 24, offset: 0 },
                 }}
-              />
-            </label>
-            <br/>
-            <label>
-              Class Names:
-              <span>{selectedNames}</span>
-              <select multiple={true} value={selectedNames} onChange={() => {setSelectedNames()}}>
-                { _.map(classNames, (name, index) => <option key={index} value={name}>{name}</option>) }
-              </select>
-            </label>
-            <br />
-            <label>
-              Period:
-              <input
-                name="period"
-                type="text"
-                onChange={(e) => {
-                  e.preventDefault();
-                  const clean = DOMPurify.sanitize(e.target.value);
-                  setEndTime(clean);
-                }}
-              />
-            </label>
-            <br/>
-            <button type="submit">Submit</button>
-          </form>
+              >
+                <Button type="dotted" htmlType="cancel" onCancel={() => setShowForm(false)}>
+                  Cancel
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
         )
-        : (<button type="button" onClick={() => setShowForm(true)}>Add Student</button>)}
+        : (<Button type="primary" onClick={() => setShowForm(true)}>Add Student</Button>)}
     </div>
   );
 }
+
+AddStudent.propTypes = {
+  data: PropTypes.object,
+  list: PropTypes.object,
+  updateList: PropTypes.func,
+  classList: PropTypes.array,
+};
+
+AddStudent.defaultProps = {
+  data: {},
+  list: {},
+  updateList: '',
+  classList: [],
+};

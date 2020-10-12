@@ -41,9 +41,9 @@ function primeDB() {
     })
     .then(() => Teacher.findOrCreate({
       where: {
-        full_name: process.env.SEEDUSER,
+        full_name: process.env.TEACHER_SEEDUSER,
         id_school: 1,
-        email: process.env.SEEDEMAIL,
+        email: process.env.TEACHER_SEEDEMAIL,
       },
     }))
     .then((numberEffected) => {
