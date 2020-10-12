@@ -101,7 +101,7 @@ export default function StudentList({
         okText="Delete"
       >
         <p>What is the ID of the class you want to remove this student from?</p>
-        <Input onChange={(e) => setClassId(e.target.value)}/> 
+        <Input onChange={(e) => setClassId(e.target.value)} />
       </Modal>
       <Modal
         title="Edit Student"
