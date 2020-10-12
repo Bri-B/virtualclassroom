@@ -22,6 +22,7 @@ export default function StudentList({
   const [showForm, setShowForm] = useState(false);
   const [match, setMatch] = useState({});
   const [classNames, setClassNames] = useState([]);
+  const [classId, setClassId] = useState(null);
   const [form] = Form.useForm();
 
   const clickDelete = (e) => {
@@ -32,52 +33,20 @@ export default function StudentList({
     // form.resetFields();
     setShowForm(false);
   };
-  const editStudent = () => {
-    const url = `${TEACHER_ROUTES.PUT_UPDATE_CLASS}${match.id}`;
-    console.log('edit', url);
-    // axios.put(url, values)
-    //   .then(() => {
-    //     console.log('put submitted');
-    //     updateList();
-    //   })
-    //   .then(() => {
-    //     form.resetFields();
-    //     setShowForm(false);
-    //   })
-    //   .catch((err) => console.error('editing class', err));
-  };
-  const onFinish = (values) => {
-    // Grabbing the values from the form
-    // const values = {
-    //   ...fieldsValue,
-    //   id_school: data.id_school,
-    //   id_teacher: data.id,
-    // };
-    console.log('Received values of form: ', values);
-    // const [filtered] = list.filter((obj) => `${obj.id}` === values.id);
-    // setMatch(filtered);
-    // editStudent();
-    setShowForm(false);
-  };
 
   const deleteClass = (e) => {
-    const id = e.slice(0, e.indexOf('.'));
-    console.log('delete', id);
-    setConfirmDelete(false);
-    // const url = `${TEACHER_ROUTES.DELETE_CLASS}${id}`;
-    // axios.delete(url)
-    //   .then(() => {
-    //     console.log('Delete');
-    //     updateList();
-    //     setConfirmDelete(false);
-    //   })
-    //   .catch((err) => console.error('editing class', err));
+    const studentId = e.slice(0, e.indexOf('.'));
+    const url = `${TEACHER_ROUTES.DELETE_STUDENT_FROM_CLASS}${studentId}/${classId}`;
+    axios.delete(url)
+      .then(() => {
+        updateList();
+        setConfirmDelete(false);
+      })
+      .catch((err) => console.error('deleting class', err));
   };
 
   useEffect(() => {
-    console.log("classlist", classList);
     const names = classList.map((cLass) => cLass.class_name);
-    console.log(names);
     setClassNames(names);
   }, [classList]);
 
@@ -90,8 +59,7 @@ export default function StudentList({
     >
       {list.length > 0 && list.map((obj, key) => (
         <SubMenu key={key} title={obj.full_name}>
-          <Menu.Item key="1" onClick={() => setShowForm(true)}>Edit</Menu.Item>
-          <Menu.Item key={`${obj.fullName}.2`} onClick={({ key }) => clickDelete(key)}>Delete</Menu.Item>
+          <Menu.Item key={`${obj.id}.2`} onClick={({ key }) => clickDelete(key)}>Delete</Menu.Item>
         </SubMenu>
       ))}
       <Modal
@@ -101,57 +69,8 @@ export default function StudentList({
         onCancel={() => setConfirmDelete(false)}
         okText="Delete"
       >
-        <p>Are you sure you want to delete?</p>
-      </Modal>
-      <Modal
-        title="Edit Student"
-        centered
-        width={750}
-        style={{ top: 20 }}
-        visible={showForm}
-        okButtonProps={{ disabled: true, style: { display: 'none' } }}
-        cancelButtonProps={{ disabled: true, style: { display: 'none' } }}
-      >
-        <Form
-          name="validate_other"
-          {...formItemLayout}
-          onFinish={onFinish}
-          form={form}
-        >
-          <Form.Item name="fullName" label="New or Current Fullname" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label="New or Current Email" rules={[{ type: 'email', required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="select-multiple"
-            label="New or Current Classes: Select[multiple]"
-            rules={[{ message: 'Please select at least one class', type: 'array' }]}
-          >
-            <Select mode="multiple" placeholder="Please select classes">
-              {classNames.map((name, index) => <Option key={index} value={name}>name</Option>)}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            wrapperCol={{
-              xs: { span: 24, offset: 0 },
-            }}
-          >
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-          <Form.Item
-            wrapperCol={{
-              xs: { span: 24, offset: 0 },
-            }}
-          >
-            <Button type="dotted" htmlType="cancel" onClick={onCancel}>
-              Cancel
-            </Button>
-          </Form.Item>
-        </Form>
+        <p>What is the ID of the class you want to remove this student from?</p>
+        <Input onChange={(e) => setClassId(e.target.value)} />
       </Modal>
     </Menu>
   );

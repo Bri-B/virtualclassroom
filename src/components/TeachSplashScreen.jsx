@@ -68,11 +68,11 @@ export default function TeachSplashScreen({ data, user }) {
           <Row>
             <Title className="nameTeacher" style={{ color: 'rgba(0, 0, 0, 0.85)' }} level={1}>{data.full_name}</Title>
             <Divider />
-            <AnnouncementList data={data} user={user} />
+            <AnnouncementList data={data} user={user} classList={classList} />
           </Row>
           <Divider />
           <Row>
-            <AssignmentList data={data} user={user} />
+            <AssignmentList data={data} user={user} classList={classList} />
           </Row>
         </Content>
         <Sider

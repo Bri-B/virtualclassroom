@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 import {
-  Form, DatePicker, TimePicker, Button, Input,
+  Form, Modal, TimePicker, Button, Input,
 } from 'antd';
-import { TEACHER_ROUTES } from '../../constants/routes';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { TEACHER_ROUTES } from '../../constants/routes';
 
 const formItemLayout = {
   labelCol: {
@@ -45,67 +45,77 @@ export default function AddClass({ data, updateList }) {
       id_school: data.id_school,
       id_teacher: data.id,
     };
-    console.log('Received values of form: ', newData);
     axios.post(url, newData)
       .then(() => {
         updateList();
         form.resetFields();
         setShowForm(false);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   return (
     <div>
       { showForm
         ? (
-          <Form
-            name="time_related_controls"
-            {...formItemLayout}
-            form={form}
-            onFinish={onFinish}
+          <Modal
+            title="Add Class"
+            centered
+            style={{ top: 20 }}
+            visible={showForm}
+            okButtonProps={{ disabled: true, style: { display: 'none' } }}
+            cancelButtonProps={{ disabled: true, style: { display: 'none' } }}
+            width={1000}
           >
-            <Form.Item
-              label="Class Name"
-              name="class_name"
-              rules={[{ required: true, message: 'Please input the class name!' }]}
+            <Form
+              name="time_related_controls"
+              {...formItemLayout}
+              form={form}
+              onFinish={onFinish}
             >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Period"
-              name="period"
-              rules={[{ required: true, message: 'Please input the class name!' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item name="start_time" label="Start Time" {...config}>
-              <TimePicker use12Hours format="h:mm:ss A" />
-            </Form.Item>
-            <Form.Item name="end_time" label="End Time" {...config}>
-              <TimePicker use12Hours format="h:mm:ss A" />
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                xs: { span: 24, offset: 0 },
-                sm: { span: 16, offset: 8 },
-              }}
-            >
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                xs: { span: 24, offset: 0 },
-                sm: { span: 16, offset: 8 },
-              }}
-            >
-              <Button type="dotted" htmlType="cancel" onClick={onCancel}>
-                Cancel
-              </Button>
-            </Form.Item>
-          </Form>
+              <Form.Item
+                label="Class Name"
+                name="class_name"
+                rules={[{ required: true, message: 'Please input the class name!' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Period"
+                name="period"
+                rules={[{ required: true, message: 'Please input the class name!' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name="start_time" label="Start Time" {...config}>
+                <TimePicker use12Hours format="h:mm:ss A" />
+              </Form.Item>
+              <Form.Item name="end_time" label="End Time" {...config}>
+                <TimePicker use12Hours format="h:mm:ss A" />
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  xs: { span: 24, offset: 0 },
+                  sm: { span: 16, offset: 8 },
+                }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  xs: { span: 24, offset: 0 },
+                  sm: { span: 16, offset: 8 },
+                }}
+              >
+                <Button type="dotted" htmlType="cancel" onClick={onCancel}>
+                  Cancel
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+
         )
         : (<Button type="primary" htmlType="submit" onClick={() => setShowForm(true)}> Add Class </Button>)}
     </div>

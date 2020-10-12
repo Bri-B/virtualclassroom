@@ -15,16 +15,10 @@ export default function App() {
   const [view, setView] = useState('');
   const [data, setData] = useState({});
 
-  const logout = () => {
-    setLoggedIn(false);
-    axios.get('/logout')
-      .catch((err) => console.error(err));
-  };
   useEffect(() => {
     axios.get('/login')
       .then((res) => {
         const { data } = res;
-        console.log(data);
         if (data) {
           const { user } = data;
           setLoggedIn(true);

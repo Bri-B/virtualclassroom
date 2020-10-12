@@ -87,8 +87,8 @@ export default function ClassList({ data, list, updateList }) {
           <Menu.Item key={`${obj.id}.2`}>{`Period: ${obj.period}`}</Menu.Item>
           <Menu.Item key={`${obj.id}.3`}>{`Start Time: ${obj.start_time}`}</Menu.Item>
           <Menu.Item key={`${obj.id}.4`}>{`End Time: ${obj.end_time}`}</Menu.Item>
-          {data.user === 'teacher' && <Menu.Item key={`${obj.id}.5`} onClick={() => { setShowForm(true); }}>'Edit'</Menu.Item>}
-          {data.user === 'teacher' && <Menu.Item key={`${obj.id}.6`} onClick={({ key }) => clickDelete(key)}>'Delete'</Menu.Item>}
+          {data.user === 'teacher' && <Menu.Item key={`${obj.id}.5`} onClick={() => { setShowForm(true); }}>Edit</Menu.Item>}
+          {data.user === 'teacher' && <Menu.Item key={`${obj.id}.6`} onClick={({ key }) => clickDelete(key)}>Delete</Menu.Item>}
         </SubMenu>
       )))}
       <Modal

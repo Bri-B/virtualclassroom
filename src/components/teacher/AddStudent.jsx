@@ -24,9 +24,13 @@ export default function AddStudent({
 }) {
   const [showForm, setShowForm] = useState(false);
   const [classNames, setClassNames] = useState([]);
+  const [form] = Form.useForm();
 
-  // post to add student and class
-  // reload student list again
+  const onCancel = () => {
+    form.resetFields();
+    alert('canceled');
+    setShowForm(false);
+  };
 
   const newStudent = (sID, cID) => {
     // add student called for each class
@@ -34,12 +38,13 @@ export default function AddStudent({
     axios.put(url)
       .then(() => {
         setShowForm(false);
+        alert(`Class Id: ${cID} added`);
       });
   };
 
   const grabAllSelectedClasses = (selectedClasses, sID) => {
-    selectedClasses.forEach((cLass) => {
-      const course = classList.filter((item) => item.class_name === cLass);
+    selectedClasses.forEach((classObj) => {
+      const course = classList.filter((item) => item.class_name === classObj);
       const courseID = course[0].id;
       newStudent(sID, courseID);
     });
@@ -70,14 +75,15 @@ export default function AddStudent({
               name="validate_other"
               {...formItemLayout}
               onFinish={onFinish}
+              form={form}
             >
-              <Form.Item name="studentID" label="Student ID" required={true}>
+              <Form.Item name="studentID" label="Student ID">
                 <Input />
               </Form.Item>
               <Form.Item
                 name="selectMultiple"
                 label="Select Multiple"
-                rules={[{ required: true, message: 'Please select at least one class', type: 'array' }]}
+                rules={[{ message: 'Please select at least one class', type: 'array' }]}
               >
                 <Select mode="multiple" placeholder="Please select classes">
                   {classNames.map((name, index) => <Option key={index} value={name}>{name}</Option>)}
@@ -99,28 +105,28 @@ export default function AddStudent({
                   xs: { span: 24, offset: 0 },
                 }}
               >
-                <Button type="dotted" htmlType="cancel" onCancel={() => setShowForm(false)}>
+                <Button type="dotted" htmlType="cancel" onCancel={onCancel}>
                   Cancel
                 </Button>
               </Form.Item>
             </Form>
           </Modal>
         )
-        : (<Button type="primary" onClick={() => setShowForm(true)}>Add Student</Button>)}
+        : (<Button type="primary" onClick={() => setShowForm(true)}>Enroll Student in Class</Button>)}
     </div>
   );
 }
 
 AddStudent.propTypes = {
   data: PropTypes.object,
-  list: PropTypes.object,
+  list: PropTypes.array,
   updateList: PropTypes.func,
   classList: PropTypes.array,
 };
 
 AddStudent.defaultProps = {
   data: {},
-  list: {},
+  list: [],
   updateList: '',
   classList: [],
 };

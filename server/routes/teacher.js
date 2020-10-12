@@ -430,7 +430,6 @@ teacherRouter.delete('/classes/:classID', (req, res) => {
             },
           })
             .then((scAssoc) => {
-              console.log(scAssoc);
               scAssoc.map((singleAssoc) => {
                 studentIDS.push(singleAssoc.dataValues.id_student);
               });
